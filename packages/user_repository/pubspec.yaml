@@ -8,6 +8,9 @@ environment:
   flutter: 3.3.1
 
 dependencies:
+  auth_client:
+    path: ../auth_client
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
 
