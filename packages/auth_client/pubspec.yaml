@@ -13,6 +13,7 @@ dependencies:
   equatable: ^2.0.5
   flutter:
     sdk: flutter
+  rxdart: ^0.27.5
 
 dev_dependencies:
   flutter_test:

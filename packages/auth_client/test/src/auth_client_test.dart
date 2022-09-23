@@ -7,18 +7,65 @@
 
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:async';
+
 import 'package:amplify_flutter/amplify_flutter.dart';
+// ignore: implementation_imports
+import 'package:amplify_flutter/src/amplify_hub.dart';
 import 'package:auth_client/auth_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+const email = 'test@test.com';
+const password = 'Password';
+const currentUserId = 'currentUserId';
+
 class _MockAmplifyAuth extends Mock implements AuthCategory {}
 
-class _FakeSignInResult extends Fake implements SignInResult {}
+class _MockSignInResult extends Mock implements SignInResult {}
 
-class _FakeSignUpResult extends Fake implements SignUpResult {}
+class _MockSignUpResult extends Mock implements SignUpResult {}
 
-class _FakeSignOutResult extends Fake implements SignOutResult {}
+class _FakeAuthUserResult extends Fake implements AuthUser {
+  @override
+  String userId = currentUserId;
+
+  @override
+  String username = email;
+}
+
+class _MockSignOutResult extends Mock implements SignOutResult {}
+
+class _FakeAmplifyHub extends Fake implements AmplifyHub {
+  @override
+  StreamSubscription<HubEvent> listen(
+    List<HubChannel> channels,
+    Listener listener,
+  ) {
+    return _controller.stream.listen(listener);
+  }
+
+  void addEventTest(HubEvent event) {
+    _controller.add(event);
+  }
+
+  final StreamController<HubEvent> _controller = StreamController<HubEvent>();
+}
+
+class _FakeHubEventSignedOut extends Fake implements HubEvent {
+  @override
+  final String eventName = 'SIGNED_OUT';
+}
+
+class _FakeHubEventSignedIn extends Fake implements HubEvent {
+  @override
+  final String eventName = 'SIGNED_IN';
+}
+
+class _FakeHubEventSessionExpired extends Fake implements HubEvent {
+  @override
+  final String eventName = 'SESSION_EXPIRED';
+}
 
 void main() {
   late AuthClient authClient;
@@ -26,23 +73,38 @@ void main() {
   late SignInResult signInResultResponse;
   late SignUpResult signUpResultResponse;
   late SignOutResult signOutResultResponse;
+  late HubEvent hubEventSignOut;
+  late HubEvent hubEventSignIn;
+  late HubEvent hubEventSessionExpired;
 
-  const email = 'test@test.com';
-  const password = 'Password';
+  late _FakeAmplifyHub amplifyHub;
+
+  late AuthUser authUserResponse;
 
   setUp(() {
     auth = _MockAmplifyAuth();
-    signInResultResponse = _FakeSignInResult();
-    signUpResultResponse = _FakeSignUpResult();
-    signOutResultResponse = _FakeSignOutResult();
-    authClient = AuthClient(auth: auth);
+    amplifyHub = _FakeAmplifyHub();
+    authClient = AuthClient(
+      auth: auth,
+      hub: amplifyHub,
+    );
   });
+
   group('AuthClient', () {
     test('can be instantiated', () {
-      expect(AuthClient(auth: auth), isNotNull);
+      expect(
+        AuthClient(
+          auth: auth,
+          hub: amplifyHub,
+        ),
+        isNotNull,
+      );
     });
 
     group('SignIn', () {
+      setUp(() {
+        signInResultResponse = _MockSignInResult();
+      });
       test('completes', () async {
         when(
           () => auth.signIn(
@@ -72,6 +134,10 @@ void main() {
     });
 
     group('SignUp', () {
+      setUp(() {
+        signUpResultResponse = _MockSignUpResult();
+      });
+
       test('completes', () async {
         when(
           () => auth.signUp(
@@ -102,6 +168,10 @@ void main() {
     });
 
     group('SignOut', () {
+      setUp(() {
+        signOutResultResponse = _MockSignOutResult();
+      });
+
       test('completes', () async {
         when(
           () => auth.signOut(),
@@ -149,6 +219,51 @@ void main() {
         expect(
           authClient.confirmSignUp(email, password),
           throwsA(isA<ConfirmationCodeSignUpFailure>()),
+        );
+      });
+    });
+
+    group('AmplifyUser', () {
+      const user = AmplifyUser(
+        id: currentUserId,
+        email: email,
+      );
+
+      setUp(() {
+        hubEventSignOut = _FakeHubEventSignedOut();
+        hubEventSignIn = _FakeHubEventSignedIn();
+        authUserResponse = _FakeAuthUserResult();
+        hubEventSessionExpired = _FakeHubEventSessionExpired();
+      });
+
+      test('emits a AmplifyUser.anonymous when hub event is SIGNED_OUT',
+          () async {
+        amplifyHub.addEventTest(hubEventSignOut);
+        await expectLater(
+          authClient.user,
+          emitsInOrder(<AmplifyUser>[AmplifyUser.anonymous]),
+        );
+      });
+
+      test('emits a AmplifyUser when hub event is SIGNED_IN', () async {
+        amplifyHub.addEventTest(hubEventSignIn);
+
+        when(() => auth.getCurrentUser()).thenAnswer(
+          (_) async => authUserResponse,
+        );
+
+        await expectLater(
+          authClient.user,
+          emitsInOrder(<AmplifyUser>[user]),
+        );
+      });
+      test('emits nothing when hub event are not SIGNED_IN or SIGNED_OUT ',
+          () async {
+        amplifyHub.addEventTest(hubEventSessionExpired);
+
+        await expectLater(
+          authClient.user,
+          emitsDone,
         );
       });
     });

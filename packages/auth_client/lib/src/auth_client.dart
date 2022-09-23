@@ -5,8 +5,14 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+import 'dart:async';
+
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+// ignore: implementation_imports
+import 'package:amplify_flutter/src/amplify_hub.dart';
+import 'package:auth_client/auth_client.dart';
+import 'package:rxdart/subjects.dart';
 
 /// {@template auth_exception}
 /// Abstract class to handle the amplify auth exceptions.
@@ -59,9 +65,31 @@ class AuthClient {
   /// {@macro auth_client}
   AuthClient({
     required AuthCategory auth,
-  }) : _auth = auth;
+    required AmplifyHub hub,
+  })  : _auth = auth,
+        _hub = hub;
 
   final AuthCategory _auth;
+  final AmplifyHub _hub;
+  final _controller = BehaviorSubject<AmplifyUser>();
+
+  /// Returns a stream of the current amplify user.
+  Stream<AmplifyUser> get user {
+    _hub.listen([HubChannel.Auth], (hubEvent) async {
+      if (hubEvent.eventName == 'SIGNED_IN') {
+        final user = await _auth.getCurrentUser();
+        _controller.add(
+          AmplifyUser(id: user.userId, email: user.username),
+        );
+      } else if (hubEvent.eventName == 'SIGNED_OUT') {
+        _controller.add(AmplifyUser.anonymous);
+      } else {
+        await _controller.close();
+      }
+    });
+
+    return _controller.stream;
+  }
 
   /// Creates a new user with the [email] and [password] variables.
   Future<void> signUp(
