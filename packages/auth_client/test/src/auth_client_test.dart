@@ -105,6 +105,7 @@ void main() {
       setUp(() {
         signInResultResponse = _MockSignInResult();
       });
+
       test('completes', () async {
         when(
           () => auth.signIn(

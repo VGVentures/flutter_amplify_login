@@ -10,6 +10,12 @@ class AmplifyUser extends Equatable {
     required this.email,
   });
 
+  /// Empty Amplify object.
+  static const anonymous = AmplifyUser(
+    id: '',
+    email: '',
+  );
+
   /// ID of the amplify user.
   final String id;
 
@@ -18,10 +24,4 @@ class AmplifyUser extends Equatable {
 
   @override
   List<Object?> get props => [id, email];
-
-  /// Empty Amplify object.
-  static const anonymous = AmplifyUser(
-    id: '',
-    email: '',
-  );
 }
