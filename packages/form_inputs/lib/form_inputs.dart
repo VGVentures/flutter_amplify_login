@@ -8,4 +8,7 @@
 /// A Dart package which exposes reusable form inputs and validation rules
 library form_inputs;
 
-export 'src/form_inputs.dart';
+export 'package:formz/formz.dart';
+
+export 'src/email.dart';
+export 'src/password.dart';
