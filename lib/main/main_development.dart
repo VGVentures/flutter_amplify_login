@@ -6,7 +6,7 @@
 // https://opensource.org/licenses/MIT.
 
 import 'package:flutter_amplify_login/app/app.dart';
-import 'package:flutter_amplify_login/bootstrap.dart';
+import 'package:flutter_amplify_login/main/bootstrap/bootstrap.dart';
 
 void main() {
   bootstrap(() => const App());
