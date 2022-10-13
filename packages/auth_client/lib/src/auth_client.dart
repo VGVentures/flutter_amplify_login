@@ -76,12 +76,12 @@ class AuthClient {
   /// Returns a stream of the current amplify user.
   Stream<AmplifyUser> get user {
     _hub.listen([HubChannel.Auth], (hubEvent) async {
-      if (hubEvent.eventName == 'SIGNED_IN') {
+      if (hubEvent.eventName.isSignedIn) {
         final user = await _auth.getCurrentUser();
         _controller.add(
           AmplifyUser(id: user.userId, email: user.username),
         );
-      } else if (hubEvent.eventName == 'SIGNED_OUT') {
+      } else if (hubEvent.eventName.isSignedOut) {
         _controller.add(AmplifyUser.anonymous);
       } else {
         await _controller.close();
@@ -147,4 +147,13 @@ class AuthClient {
       Error.throwWithStackTrace(SignOutFailure(error), stackTrace);
     }
   }
+}
+
+/// Extension to get HubEvent names.
+extension HubEventNameX on String {
+  /// Wether is signed in.
+  bool get isSignedIn => this == 'SIGNED_IN';
+
+  /// Wether is signed out.
+  bool get isSignedOut => this == 'SIGNED_OUT';
 }

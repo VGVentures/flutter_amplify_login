@@ -70,17 +70,6 @@ void main() {
         verify(() => authClient.signIn(emailTest, passwordTest)).called(1);
       });
 
-      test('rethrows SignInFailure', () async {
-        final exception = FakeSignInFailure();
-        when(
-          () => authClient.signIn(emailTest, passwordTest),
-        ).thenThrow(exception);
-        expect(
-          () => userRepository.signIn(email: emailTest, password: passwordTest),
-          throwsA(exception),
-        );
-      });
-
       test('throws SignInFailure on generic exception', () async {
         when(
           () => authClient.signIn(emailTest, passwordTest),
@@ -104,17 +93,6 @@ void main() {
         verify(() => authClient.signUp(emailTest, passwordTest)).called(1);
       });
 
-      test('rethrows SignUpFailure', () async {
-        final exception = FakeSignUpFailure();
-        when(
-          () => authClient.signUp(emailTest, passwordTest),
-        ).thenThrow(exception);
-        expect(
-          () => userRepository.signUp(email: emailTest, password: passwordTest),
-          throwsA(exception),
-        );
-      });
-
       test('throws SignInFailure on generic exception', () async {
         when(
           () => authClient.signUp(emailTest, passwordTest),
@@ -133,15 +111,6 @@ void main() {
         ).thenAnswer((_) async {});
         await userRepository.signOut();
         verify(() => authClient.signOut()).called(1);
-      });
-
-      test('rethrows SignOutFailure', () async {
-        final exception = FakeSignOutFailure();
-        when(() => authClient.signOut()).thenThrow(exception);
-        expect(
-          () => userRepository.signOut(),
-          throwsA(exception),
-        );
       });
 
       test('throws SignOutFailure on generic exception', () async {
@@ -166,20 +135,6 @@ void main() {
         );
         verify(() => authClient.confirmSignUp(emailTest, confirmationCodeTest))
             .called(1);
-      });
-
-      test('rethrows ConfirmationCodeSignUpFailure', () async {
-        final exception = FakeConfirmationCodeSignUpFailure();
-        when(
-          () => authClient.confirmSignUp(emailTest, confirmationCodeTest),
-        ).thenThrow(exception);
-        expect(
-          () => userRepository.confirmSignUp(
-            email: emailTest,
-            confirmationCode: confirmationCodeTest,
-          ),
-          throwsA(exception),
-        );
       });
 
       test('throws ConfirmationCodeSignUpFailure on generic exception',
