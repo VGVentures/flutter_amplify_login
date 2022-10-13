@@ -1,5 +1,5 @@
 name: flutter_amplify_login
-description: Example of a flutter application to use Very Good CLI and AWS” Amplify auth service
+description: Example of a flutter application to use Very Good CLI and AWS Amplify auth service
 version: 1.0.0+1
 publish_to: none
 
@@ -8,6 +8,10 @@ environment:
   flutter: 3.3.4
 
 dependencies:
+  amplify_auth_cognito: ^0.6.8
+  amplify_flutter: ^0.6.8
+  auth_client:
+    path: packages/auth_client
   bloc: ^8.1.0
   flutter:
     sdk: flutter

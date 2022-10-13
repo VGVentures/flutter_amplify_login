@@ -8,8 +8,12 @@ environment:
   flutter: 3.3.4
 
 dependencies:
+  amplify_auth_cognito: ^0.6.8
+  amplify_flutter: ^0.6.8
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
+  rxdart: ^0.27.5
 
 dev_dependencies:
   flutter_test:
