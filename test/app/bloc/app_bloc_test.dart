@@ -87,22 +87,6 @@ void main() {
         ),
         expect: () => [AppState.unauthenticated()],
       );
-
-      blocTest<AppBloc, AppState>(
-        'emits nothing when '
-        'state is unauthenticated and user is anonymous',
-        setUp: () {
-          when(() => userRepository.user).thenAnswer(
-            (_) => Stream.value(AmplifyUser.anonymous),
-          );
-        },
-        build: () => AppBloc(
-          userRepository: userRepository,
-          user: user,
-        ),
-        seed: AppState.unauthenticated,
-        expect: () => <AppState>[],
-      );
     });
 
     group('AppSignOutRequested', () {
