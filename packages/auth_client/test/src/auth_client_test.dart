@@ -258,6 +258,7 @@ void main() {
           emitsInOrder(<AmplifyUser>[user]),
         );
       });
+
       test('emits nothing when hub event are not SIGNED_IN or SIGNED_OUT ',
           () async {
         amplifyHub.addEventTest(hubEventSessionExpired);
