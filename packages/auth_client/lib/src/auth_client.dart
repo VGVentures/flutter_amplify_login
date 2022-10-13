@@ -150,7 +150,7 @@ class AuthClient {
 }
 
 /// Extension to get HubEvent names.
-extension StringX on String {
+extension HubEventNameX on String {
   /// Wether is signed in.
   bool get isSignedIn => this == 'SIGNED_IN';
 
