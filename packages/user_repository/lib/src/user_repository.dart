@@ -24,7 +24,7 @@ class UserRepository {
   /// Emits [AmplifyUser.anonymous] if the user is not authenticated.
   Stream<AmplifyUser> get user => _authClient.user;
 
-  /// Starts the Sign Up Flow.
+  /// Starts the Sign Up flow.
   ///
   /// Throws a [SignUpFailure] if an exception occurs.
   Future<void> signUp({
@@ -33,14 +33,12 @@ class UserRepository {
   }) async {
     try {
       await _authClient.signUp(email, password);
-    } on SignUpFailure {
-      rethrow;
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(SignUpFailure(error), stackTrace);
     }
   }
 
-  /// Starts the Sign In Flow.
+  /// Starts the Sign In flow.
   ///
   /// Throws a [SignInFailure] if an exception occurs.
   Future<void> signIn({
@@ -49,27 +47,23 @@ class UserRepository {
   }) async {
     try {
       await _authClient.signIn(email, password);
-    } on SignInFailure {
-      rethrow;
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(SignInFailure(error), stackTrace);
     }
   }
 
-  /// Starts the Sign Out Flow.
+  /// Starts the Sign Out flow.
   ///
   /// Throws a [SignOutFailure] if an exception occurs.
   Future<void> signOut() async {
     try {
       await _authClient.signOut();
-    } on SignOutFailure {
-      rethrow;
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(SignOutFailure(error), stackTrace);
     }
   }
 
-  /// Starts the Confirmation Sign Up Flow.
+  /// Starts the Confirmation Sign Up flow.
   ///
   /// Throws a [ConfirmationCodeSignUpFailure] if an exception occurs.
   Future<void> confirmSignUp({
@@ -78,8 +72,6 @@ class UserRepository {
   }) async {
     try {
       await _authClient.confirmSignUp(email, confirmationCode);
-    } on ConfirmationCodeSignUpFailure {
-      rethrow;
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(
         ConfirmationCodeSignUpFailure(error),
