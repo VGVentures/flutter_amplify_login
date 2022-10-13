@@ -1,4 +1,4 @@
-name: form inputs
+name: form_inputs
 
 concurrency:
   group: $-$
@@ -17,4 +17,4 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
     with:
       flutter_channel: stable
-      flutter_version: 3.3.3
+      flutter_version: 3.3.4
