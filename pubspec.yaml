@@ -19,6 +19,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.17.0
+  user_repository:
+    path: packages/user_repository
 
 dev_dependencies:
   bloc_test: ^9.1.0
