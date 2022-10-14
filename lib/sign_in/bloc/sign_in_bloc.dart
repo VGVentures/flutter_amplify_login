@@ -52,8 +52,8 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
     try {
       await _userRepository.signIn(
-        email: state.email.value,
-        password: state.password.value,
+        email: event.email,
+        password: event.password,
       );
       emit(state.copyWith(status: FormzSubmissionStatus.success));
     } catch (error, stackTrace) {
