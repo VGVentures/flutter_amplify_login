@@ -6,8 +6,8 @@ import 'package:user_repository/user_repository.dart';
 part 'sign_in_event.dart';
 part 'sign_in_state.dart';
 
-class SignUpBloc extends Bloc<SignInEvent, SignInState> {
-  SignUpBloc({
+class SignInBloc extends Bloc<SignInEvent, SignInState> {
+  SignInBloc({
     required UserRepository userRepository,
   })  : _userRepository = userRepository,
         super(const SignInState()) {
@@ -49,15 +49,15 @@ class SignUpBloc extends Bloc<SignInEvent, SignInState> {
     Emitter<SignInState> emit,
   ) async {
     if (!state.valid) return;
-    emit(state.copyWith(status: SignInStatus.signInLoading));
+    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
     try {
       await _userRepository.signIn(
         email: state.email.value,
         password: state.password.value,
       );
-      emit(state.copyWith(status: SignInStatus.signInSuccess));
+      emit(state.copyWith(status: FormzSubmissionStatus.success));
     } catch (error, stackTrace) {
-      emit(state.copyWith(status: SignInStatus.signInFailure));
+      emit(state.copyWith(status: FormzSubmissionStatus.failure));
       addError(error, stackTrace);
     }
   }
