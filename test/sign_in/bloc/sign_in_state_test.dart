@@ -37,10 +37,10 @@ void main() {
       );
     });
 
-    test('returns object with updated valid when valid is passed', () {
+    test('returns object with updated valid when isValid is passed', () {
       expect(
-        SignInState().copyWith(valid: true),
-        SignInState(valid: true),
+        SignInState().copyWith(isValid: true),
+        SignInState(isValid: true),
       );
     });
   });

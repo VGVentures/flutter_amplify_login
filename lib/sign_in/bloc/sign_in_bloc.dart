@@ -26,7 +26,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     emit(
       state.copyWith(
         email: email,
-        valid: Formz.validate([email, state.password]),
+        isValid: Formz.validate([email, state.password]),
       ),
     );
   }
@@ -39,7 +39,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     emit(
       state.copyWith(
         password: password,
-        valid: Formz.validate([password, state.email]),
+        isValid: Formz.validate([password, state.email]),
       ),
     );
   }
@@ -48,7 +48,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     SignInSubmitted event,
     Emitter<SignInState> emit,
   ) async {
-    if (!state.valid) return;
+    if (!state.isValid) return;
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
     try {
       await _userRepository.signIn(

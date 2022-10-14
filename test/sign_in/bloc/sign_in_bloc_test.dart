@@ -76,7 +76,7 @@ void main() {
           SignInState(
             email: validEmail,
             password: validPassword,
-            valid: true,
+            isValid: true,
           ),
         ],
       );
@@ -118,7 +118,7 @@ void main() {
           SignInState(
             password: validPassword,
             email: validEmail,
-            valid: true,
+            isValid: true,
           ),
         ],
       );
@@ -143,7 +143,7 @@ void main() {
         seed: () => SignInState(
           email: validEmail,
           password: validPassword,
-          valid: true,
+          isValid: true,
         ),
         act: (bloc) => bloc.add(
           SignInSubmitted(
@@ -168,7 +168,7 @@ void main() {
         seed: () => SignInState(
           email: validEmail,
           password: validPassword,
-          valid: true,
+          isValid: true,
         ),
         act: (bloc) => bloc.add(
           SignInSubmitted(
@@ -181,13 +181,13 @@ void main() {
             status: FormzSubmissionStatus.inProgress,
             email: validEmail,
             password: validPassword,
-            valid: true,
+            isValid: true,
           ),
           SignInState(
             status: FormzSubmissionStatus.success,
             email: validEmail,
             password: validPassword,
-            valid: true,
+            isValid: true,
           )
         ],
       );
@@ -209,7 +209,7 @@ void main() {
         seed: () => SignInState(
           email: validEmail,
           password: validPassword,
-          valid: true,
+          isValid: true,
         ),
         act: (bloc) => bloc.add(
           SignInSubmitted(
@@ -222,13 +222,13 @@ void main() {
             status: FormzSubmissionStatus.inProgress,
             email: validEmail,
             password: validPassword,
-            valid: true,
+            isValid: true,
           ),
           SignInState(
             status: FormzSubmissionStatus.failure,
             email: validEmail,
             password: validPassword,
-            valid: true,
+            isValid: true,
           )
         ],
       );
