@@ -6,15 +6,15 @@ enum ConfirmationCodeValidationError {
   invalid
 }
 
-/// {@template confirmation_code_name}
+/// {@template confirmation_code}
 /// Reusable confirmation code form input.
 /// {@endtemplate}
 class ConfirmationCode
     extends FormzInput<String, ConfirmationCodeValidationError> {
-  /// {@macro confirmation_code_name}
+  /// {@macro confirmation_code}
   const ConfirmationCode.pure() : super.pure('');
 
-  /// {@macro confirmation_code_name}
+  /// {@macro confirmation_code}
   const ConfirmationCode.dirty([super.value = '']) : super.dirty();
 
   @override
