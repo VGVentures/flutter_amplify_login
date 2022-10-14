@@ -15,7 +15,7 @@ class SignUpState extends Equatable {
   final bool valid;
 
   @override
-  List<Object> get props => [email, status, valid];
+  List<Object> get props => [email, password, status, valid];
 
   SignUpState copyWith({
     Email? email,
