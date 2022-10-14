@@ -10,5 +10,6 @@ library form_inputs;
 
 export 'package:formz/formz.dart';
 
+export 'src/confirmation_code.dart';
 export 'src/email.dart';
 export 'src/password.dart';
