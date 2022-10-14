@@ -29,7 +29,7 @@ void main() {
         );
       });
 
-      test('returns invalid error when confirmation code lenght is less than 3',
+      test('returns invalid error when confirmation code length is less than 3',
           () {
         expect(
           ConfirmationCode.dirty(confirmationCodeInvalidString).error,
