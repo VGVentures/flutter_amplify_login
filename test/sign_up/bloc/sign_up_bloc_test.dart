@@ -47,6 +47,7 @@ void main() {
         'emits [invalid] when email is invalid and password is invalid',
         build: () => SignUpBloc(userRepository: userRepository),
         act: (bloc) => bloc.add(SignUpEmailChanged(invalidEmailString)),
+        seed: () => SignUpState(password: invalidPassword),
         expect: () => const <SignUpState>[
           SignUpState(
             email: invalidEmail,
@@ -59,6 +60,7 @@ void main() {
         'emits [invalid] when email is invalid and password is valid',
         build: () => SignUpBloc(userRepository: userRepository),
         act: (bloc) => bloc.add(SignUpEmailChanged(invalidEmailString)),
+        seed: () => SignUpState(password: validPassword),
         expect: () => const <SignUpState>[
           SignUpState(
             email: invalidEmail,
@@ -86,7 +88,8 @@ void main() {
       blocTest<SignUpBloc, SignUpState>(
         'emits [invalid] when password is invalid and email is invalid',
         build: () => SignUpBloc(userRepository: userRepository),
-        act: (bloc) => bloc.add(SignUpEmailChanged(invalidEmailString)),
+        act: (bloc) => bloc.add(SignUpPasswordChanged(invalidPasswordString)),
+        seed: () => SignUpState(email: invalidEmail),
         expect: () => const <SignUpState>[
           SignUpState(
             email: invalidEmail,
@@ -98,11 +101,12 @@ void main() {
       blocTest<SignUpBloc, SignUpState>(
         'emits [invalid] when password is invalid and email is valid',
         build: () => SignUpBloc(userRepository: userRepository),
-        act: (bloc) => bloc.add(SignUpEmailChanged(invalidEmailString)),
+        act: (bloc) => bloc.add(SignUpPasswordChanged(invalidPasswordString)),
+        seed: () => SignUpState(email: validEmail),
         expect: () => const <SignUpState>[
           SignUpState(
-            email: invalidEmail,
-            password: validPassword,
+            email: validEmail,
+            password: invalidPassword,
           ),
         ],
       );
@@ -178,11 +182,13 @@ void main() {
           SignUpState(
             status: FormzSubmissionStatus.inProgress,
             email: validEmail,
+            password: validPassword,
             valid: true,
           ),
           SignUpState(
             status: FormzSubmissionStatus.success,
             email: validEmail,
+            password: validPassword,
             valid: true,
           )
         ],
@@ -217,11 +223,13 @@ void main() {
           SignUpState(
             status: FormzSubmissionStatus.inProgress,
             email: validEmail,
+            password: validPassword,
             valid: true,
           ),
           SignUpState(
             status: FormzSubmissionStatus.failure,
             email: validEmail,
+            password: validPassword,
             valid: true,
           )
         ],
