@@ -13,11 +13,14 @@ dependencies:
   auth_client:
     path: packages/auth_client
   bloc: ^8.1.0
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.1
   flutter_localizations:
     sdk: flutter
+  form_inputs:
+    path: packages/form_inputs
   intl: ^0.17.0
   user_repository:
     path: packages/user_repository
