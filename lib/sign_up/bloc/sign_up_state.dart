@@ -6,28 +6,28 @@ class SignUpState extends Equatable {
     this.email = const Email.pure(),
     this.password = const Password.pure(),
     this.status = FormzSubmissionStatus.initial,
-    this.valid = false,
+    this.isValid = false,
   });
 
   final Email email;
   final Password password;
   final FormzSubmissionStatus status;
-  final bool valid;
+  final bool isValid;
 
   @override
-  List<Object> get props => [email, password, status, valid];
+  List<Object> get props => [email, password, status, isValid];
 
   SignUpState copyWith({
     Email? email,
     Password? password,
     FormzSubmissionStatus? status,
-    bool? valid,
+    bool? isValid,
   }) {
     return SignUpState(
       email: email ?? this.email,
       password: password ?? this.password,
       status: status ?? this.status,
-      valid: valid ?? this.valid,
+      isValid: isValid ?? this.isValid,
     );
   }
 }

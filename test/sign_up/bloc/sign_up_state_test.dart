@@ -39,8 +39,8 @@ void main() {
 
     test('returns object with updated valid when valid is passed', () {
       expect(
-        SignUpState().copyWith(valid: true),
-        SignUpState(valid: true),
+        SignUpState().copyWith(isValid: true),
+        SignUpState(isValid: true),
       );
     });
   });
