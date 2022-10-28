@@ -36,9 +36,7 @@ void main() {
             status: AppStatus.unauthenticated,
           ),
           equals(
-            AppState(
-              status: AppStatus.unauthenticated,
-            ),
+            AppState(),
           ),
         );
       });
@@ -49,9 +47,7 @@ void main() {
         expect(
           AppState.unauthenticated().copyWith(),
           equals(
-            AppState(
-              status: AppStatus.unauthenticated,
-            ),
+            AppState(),
           ),
         );
       });
