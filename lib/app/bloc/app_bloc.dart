@@ -11,51 +11,51 @@ part 'app_state.dart';
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc({
     required UserRepository userRepository,
-    required AmplifyUser user,
+    required bool isAuthenticated,
   })  : _userRepository = userRepository,
         super(
-          user == AmplifyUser.anonymous
-              ? const AppState.unauthenticated()
-              : AppState.authenticated(user),
+          isAuthenticated
+              ? const AppState.authenticated()
+              : const AppState.unauthenticated(),
         ) {
-    on<AppUserChanged>(_onUserChanged);
+    on<AppAuthStatusChanged>(_onAuthStatusChanged);
     on<AppSignOutRequested>(_onSignOutRequested);
 
-    _userSubscription = _userRepository.user.listen(_userChanged);
+    _authStatusSubscription = _userRepository.authStatus.listen(
+      _authStatusChanged,
+    );
   }
 
   final UserRepository _userRepository;
-  late StreamSubscription<AmplifyUser> _userSubscription;
+  late StreamSubscription<AuthStatus> _authStatusSubscription;
 
-  void _userChanged(AmplifyUser user) => add(AppUserChanged(user));
+  void _authStatusChanged(AuthStatus authStatus) =>
+      add(AppAuthStatusChanged(authStatus));
 
-  void _onUserChanged(AppUserChanged event, Emitter<AppState> emit) {
-    final user = event.user;
-
-    switch (state.status) {
-      case AppStatus.onboardingRequired:
-      case AppStatus.authenticated:
-      case AppStatus.unauthenticated:
-        return user == AmplifyUser.anonymous
-            ? emit(const AppState.unauthenticated())
-            : emit(
-                AppState.authenticated(
-                  user,
-                ),
-              );
+  void _onAuthStatusChanged(
+    AppAuthStatusChanged event,
+    Emitter<AppState> emit,
+  ) {
+    switch (event.authStatus) {
+      case AuthStatus.authenticated:
+        emit(const AppState.authenticated());
+        break;
+      case AuthStatus.unauthenticated:
+        emit(const AppState.unauthenticated());
+        break;
+      case AuthStatus.sessionExpired:
+        emit(const AppState.sessionExpired());
+        break;
     }
   }
 
   void _onSignOutRequested(AppSignOutRequested event, Emitter<AppState> emit) {
-    // We are disabling notifications when a user logs out because
-    // the user should not receive any notifications when signed out.
-
     unawaited(_userRepository.signOut());
   }
 
   @override
   Future<void> close() {
-    _userSubscription.cancel();
+    _authStatusSubscription.cancel();
     return super.close();
   }
 }

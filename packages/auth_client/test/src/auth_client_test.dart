@@ -9,6 +9,7 @@
 
 import 'dart:async';
 
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 // ignore: implementation_imports
 import 'package:amplify_flutter/src/amplify_hub.dart';
@@ -16,25 +17,22 @@ import 'package:auth_client/auth_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-const email = 'test@test.com';
-const password = 'Password';
-const currentUserId = 'currentUserId';
-
-class _MockAmplifyAuth extends Mock implements AuthCategory {}
-
-class _MockSignInResult extends Mock implements SignInResult {}
-
-class _MockSignUpResult extends Mock implements SignUpResult {}
-
-class _FakeAuthUserResult extends Fake implements AuthUser {
-  @override
-  String userId = currentUserId;
-
-  @override
-  String username = email;
+class AuthHubEvent extends HubEvent {
+  AuthHubEvent(super.eventName);
 }
 
-class _MockSignOutResult extends Mock implements SignOutResult {}
+class _FakeSignInResult extends Fake implements SignInResult {}
+
+class _FakeSignOutResult extends Fake implements SignOutResult {}
+
+class _MockAuthCategory extends Mock implements AuthCategory {}
+
+class _FakeSignUpResult extends Fake implements SignUpResult {
+  @override
+  bool isSignUpComplete = true;
+}
+
+class FakeCognitoSignUpOptions extends Fake implements CognitoSignUpOptions {}
 
 class _FakeAmplifyHub extends Fake implements AmplifyHub {
   @override
@@ -52,222 +50,288 @@ class _FakeAmplifyHub extends Fake implements AmplifyHub {
   final StreamController<HubEvent> _controller = StreamController<HubEvent>();
 }
 
-class _FakeHubEventSignedOut extends Fake implements HubEvent {
-  @override
-  final String eventName = 'SIGNED_OUT';
-}
-
-class _FakeHubEventSignedIn extends Fake implements HubEvent {
-  @override
-  final String eventName = 'SIGNED_IN';
-}
-
-class _FakeHubEventSessionExpired extends Fake implements HubEvent {
-  @override
-  final String eventName = 'SESSION_EXPIRED';
-}
-
 void main() {
   late AuthClient authClient;
-  late AuthCategory auth;
-  late SignInResult signInResultResponse;
-  late SignUpResult signUpResultResponse;
-  late SignOutResult signOutResultResponse;
-  late HubEvent hubEventSignOut;
-  late HubEvent hubEventSignIn;
-  late HubEvent hubEventSessionExpired;
-
+  late AuthCategory authCategory;
   late _FakeAmplifyHub amplifyHub;
 
-  late AuthUser authUserResponse;
+  const email = 'test@test.com';
+  const password = 'Password';
+  const confirmationCode = 'code';
 
   setUp(() {
-    auth = _MockAmplifyAuth();
+    authCategory = _MockAuthCategory();
     amplifyHub = _FakeAmplifyHub();
     authClient = AuthClient(
-      auth: auth,
+      auth: authCategory,
       hub: amplifyHub,
     );
   });
 
   group('AuthClient', () {
-    test('can be instantiated', () {
-      expect(
-        AuthClient(
-          auth: auth,
-          hub: amplifyHub,
-        ),
-        isNotNull,
-      );
-    });
-
-    group('SignIn', () {
-      setUp(() {
-        signInResultResponse = _MockSignInResult();
-      });
-
-      test('completes', () async {
+    group('signIn', () {
+      test('completes successfully', () {
         when(
-          () => auth.signIn(
-            username: any(named: 'username'),
-            password: any(named: 'password'),
+          () => authCategory.signIn(
+            username: email,
+            password: password,
           ),
-        ).thenAnswer(
-          (_) async => signInResultResponse,
+        ).thenAnswer((_) async => _FakeSignInResult());
+        expect(
+          authClient.signIn(email, password),
+          completes,
         );
-
-        expect(authClient.signIn(email, password), completes);
       });
 
-      test('throw SignInFailure', () async {
-        when(
-          () => auth.signIn(
-            username: any(named: 'username'),
-            password: any(named: 'password'),
-          ),
-        ).thenThrow((_) async => Exception());
+      test('throws UserDoesNotExistException when UserNotFoundException', () {
+        when(() => authCategory.signIn(username: email, password: password))
+            .thenThrow(UserNotFoundException(''));
+        expect(
+          authClient.signIn(email, password),
+          throwsA(isA<UserDoesNotExistException>()),
+        );
+      });
 
+      test('throws UserDoesNotExistException when NotAuthorizedException', () {
+        when(() => authCategory.signIn(username: email, password: password))
+            .thenThrow(NotAuthorizedException(''));
+        expect(
+          authClient.signIn(email, password),
+          throwsA(isA<UserDoesNotExistException>()),
+        );
+      });
+
+      test('throws SignInFailure when AuthException', () {
+        when(() => authCategory.signIn(username: email, password: password))
+            .thenThrow(AuthException(''));
+        expect(
+          authClient.signIn(email, password),
+          throwsA(isA<SignInFailure>()),
+        );
+      });
+
+      test('throws SignInFailure when any exception happens', () {
+        when(() => authCategory.signIn(username: email, password: password))
+            .thenThrow(Exception());
         expect(
           authClient.signIn(email, password),
           throwsA(isA<SignInFailure>()),
         );
       });
     });
+  });
 
-    group('SignUp', () {
-      setUp(() {
-        signUpResultResponse = _MockSignUpResult();
-      });
-
-      test('completes', () async {
-        when(
-          () => auth.signUp(
-            username: any(named: 'username'),
-            password: any(named: 'password'),
-            options: any(named: 'options'),
-          ),
-        ).thenAnswer(
-          (_) async => signUpResultResponse,
-        );
-
-        expect(authClient.signUp(email, password), completes);
-      });
-
-      test('throw SignUpFailure', () async {
-        when(
-          () => auth.signIn(
-            username: any(named: 'username'),
-            password: any(named: 'password'),
-          ),
-        ).thenThrow((_) async => Exception());
-
-        expect(
-          authClient.signUp(email, password),
-          throwsA(isA<SignUpFailure>()),
-        );
-      });
-    });
-
-    group('SignOut', () {
-      setUp(() {
-        signOutResultResponse = _MockSignOutResult();
-      });
-
-      test('completes', () async {
-        when(
-          () => auth.signOut(),
-        ).thenAnswer(
-          (_) async => signOutResultResponse,
-        );
-
-        expect(authClient.signOut(), completes);
-      });
-
-      test('throw SignOutFailure', () async {
-        when(
-          () => auth.signOut(),
-        ).thenThrow((_) async => Exception());
-
-        expect(
-          authClient.signOut(),
-          throwsA(isA<SignOutFailure>()),
-        );
-      });
-    });
-
-    group('ConfirmSignUp', () {
-      test('completes', () async {
-        when(
-          () => auth.confirmSignUp(
-            username: any(named: 'username'),
-            confirmationCode: any(named: 'confirmationCode'),
-          ),
-        ).thenAnswer(
-          (_) async => signUpResultResponse,
-        );
-
-        expect(authClient.confirmSignUp(email, password), completes);
-      });
-
-      test('throw ConfirmationCodeSignUpFailure', () async {
-        when(
-          () => auth.confirmSignUp(
-            username: any(named: 'username'),
-            confirmationCode: any(named: 'confirmationCode'),
-          ),
-        ).thenThrow((_) async => Exception());
-
-        expect(
-          authClient.confirmSignUp(email, password),
-          throwsA(isA<ConfirmationCodeSignUpFailure>()),
-        );
-      });
-    });
-
-    group('AmplifyUser', () {
-      const user = AmplifyUser(
-        id: currentUserId,
-        email: email,
+  group('signUp', () {
+    test('completes successfully', () {
+      when(
+        () => authCategory.signUp(
+          username: email,
+          password: password,
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer((_) async => _FakeSignUpResult());
+      expect(
+        authClient.signUp(email, password),
+        completes,
       );
+    });
 
-      setUp(() {
-        hubEventSignOut = _FakeHubEventSignedOut();
-        hubEventSignIn = _FakeHubEventSignedIn();
-        authUserResponse = _FakeAuthUserResult();
-        hubEventSessionExpired = _FakeHubEventSessionExpired();
+    test('throws UserAlreadyExistException when UsernameExistsException', () {
+      when(
+        () => authCategory.signUp(
+          username: email,
+          password: password,
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(UsernameExistsException(''));
+      expect(
+        authClient.signUp(email, password),
+        throwsA(isA<UserAlreadyExistException>()),
+      );
+    });
+
+    test('throws SignUpFailure when AuthException', () {
+      when(
+        () => authCategory.signUp(
+          username: email,
+          password: password,
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(AuthException(''));
+      expect(
+        authClient.signUp(email, password),
+        throwsA(isA<SignUpFailure>()),
+      );
+    });
+
+    test('throws SignInFailure when any exception happens', () {
+      when(
+        () => authCategory.signUp(
+          username: email,
+          password: password,
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(Exception());
+      expect(
+        authClient.signUp(email, password),
+        throwsA(isA<SignUpFailure>()),
+      );
+    });
+  });
+
+  group('confirmSignUp', () {
+    test('completes successfully', () {
+      when(
+        () => authCategory.confirmSignUp(
+          username: email,
+          confirmationCode: confirmationCode,
+        ),
+      ).thenAnswer((_) async => _FakeSignUpResult());
+      expect(
+        authClient.confirmSignUp(email, confirmationCode),
+        completes,
+      );
+    });
+
+    test('throws ConfirmationCodeSignUpFailure when AuthException', () {
+      when(
+        () => authCategory.confirmSignUp(
+          username: email,
+          confirmationCode: confirmationCode,
+        ),
+      ).thenThrow(AuthException(''));
+      expect(
+        authClient.confirmSignUp(email, confirmationCode),
+        throwsA(isA<ConfirmationCodeSignUpFailure>()),
+      );
+    });
+
+    test('throws ConfirmationCodeSignUpFailure when any exception happens', () {
+      when(
+        () => authCategory.confirmSignUp(
+          username: email,
+          confirmationCode: confirmationCode,
+        ),
+      ).thenThrow(Exception());
+      expect(
+        authClient.confirmSignUp(email, confirmationCode),
+        throwsA(isA<ConfirmationCodeSignUpFailure>()),
+      );
+    });
+  });
+
+  group('signOut', () {
+    test('completes successfully', () {
+      when(() => authCategory.signOut())
+          .thenAnswer((_) async => _FakeSignOutResult());
+      expect(authClient.signOut(), completes);
+    });
+
+    test('throws SignOutFailure when AuthException', () {
+      when(() => authCategory.signOut()).thenThrow(AuthException(''));
+      expect(
+        authClient.signOut,
+        throwsA(isA<SignOutFailure>()),
+      );
+    });
+
+    test('throws SignOutFailure when any exception happens', () {
+      when(() => authCategory.signOut()).thenThrow(Exception());
+      expect(
+        authClient.signOut,
+        throwsA(isA<SignOutFailure>()),
+      );
+    });
+
+    group('isUserAuthenticated', () {
+      test('returns true if user is signed in', () {
+        when(() => authCategory.fetchAuthSession())
+            .thenAnswer((_) async => AuthSession(isSignedIn: true));
+        expect(authClient.isUserAuthenticated(), completion(equals(true)));
       });
 
-      test('emits a AmplifyUser.anonymous when hub event is SIGNED_OUT',
-          () async {
-        amplifyHub.addEventTest(hubEventSignOut);
-        await expectLater(
-          authClient.user,
-          emitsInOrder(<AmplifyUser>[AmplifyUser.anonymous]),
+      test('returns false if user is not signed in', () {
+        when(() => authCategory.fetchAuthSession())
+            .thenAnswer((_) async => AuthSession(isSignedIn: false));
+        expect(authClient.isUserAuthenticated(), completion(equals(false)));
+      });
+
+      test('throws FetchAuthenticatedUserFailure when AuthException', () {
+        when(() => authCategory.fetchAuthSession())
+            .thenThrow(AuthException(''));
+        expect(
+          authClient.isUserAuthenticated,
+          throwsA(isA<FetchAuthenticatedUserFailure>()),
         );
       });
 
-      test('emits a AmplifyUser when hub event is SIGNED_IN', () async {
-        amplifyHub.addEventTest(hubEventSignIn);
-
-        when(() => auth.getCurrentUser()).thenAnswer(
-          (_) async => authUserResponse,
-        );
-
-        await expectLater(
-          authClient.user,
-          emitsInOrder(<AmplifyUser>[user]),
+      test('throws FetchAuthenticatedUserFailure when any exception happens',
+          () {
+        when(() => authCategory.fetchAuthSession()).thenThrow(Exception());
+        expect(
+          authClient.isUserAuthenticated,
+          throwsA(isA<FetchAuthenticatedUserFailure>()),
         );
       });
+    });
+  });
 
-      test('emits nothing when hub event are not SIGNED_IN or SIGNED_OUT ',
-          () async {
-        amplifyHub.addEventTest(hubEventSessionExpired);
+  group('AuthHubEvent', () {
+    test('emits authenticated', () async {
+      final amplifyHub = _FakeAmplifyHub();
 
-        await expectLater(
-          authClient.user,
-          emitsDone,
-        );
-      });
+      final authClient = AuthClient(
+        auth: authCategory,
+        hub: amplifyHub,
+      );
+      amplifyHub._controller.add(AuthHubEvent('SIGNED_IN'));
+
+      await expectLater(
+        authClient.authStatus,
+        emitsInOrder(<AuthStatus>[AuthStatus.authenticated]),
+      );
+    });
+
+    test('emits unauthenticated', () async {
+      final amplifyHub = _FakeAmplifyHub();
+
+      final authClient = AuthClient(
+        auth: authCategory,
+        hub: amplifyHub,
+      );
+      amplifyHub._controller.add(AuthHubEvent('SIGNED_OUT'));
+      await expectLater(
+        authClient.authStatus,
+        emitsInOrder(<AuthStatus>[AuthStatus.unauthenticated]),
+      );
+    });
+
+    test('emits sessionExpired', () async {
+      final amplifyHub = _FakeAmplifyHub();
+
+      final authClient = AuthClient(
+        auth: authCategory,
+        hub: amplifyHub,
+      );
+      amplifyHub._controller.add(AuthHubEvent('SESSION_EXPIRED'));
+      await expectLater(
+        authClient.authStatus,
+        emitsInOrder(<AuthStatus>[AuthStatus.sessionExpired]),
+      );
+    });
+
+    test('does not emit anything if any other HubEvent', () async {
+      final amplifyHub = _FakeAmplifyHub();
+
+      final authClient = AuthClient(
+        auth: authCategory,
+        hub: amplifyHub,
+      );
+      amplifyHub._controller.add(AuthHubEvent('OTHER'));
+      await expectLater(
+        authClient.authStatus,
+        emitsInOrder(<AuthStatus>[]),
+      );
     });
   });
 }

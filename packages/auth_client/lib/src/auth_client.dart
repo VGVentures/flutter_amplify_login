@@ -14,52 +14,20 @@ import 'package:amplify_flutter/src/amplify_hub.dart';
 import 'package:auth_client/auth_client.dart';
 import 'package:rxdart/subjects.dart';
 
-/// {@template auth_exception}
-/// Abstract class to handle the amplify auth exceptions.
-/// {@endtemplate}
-abstract class AuthException implements Exception {
-  /// {@macro auth_exception}
-  const AuthException(this.error);
+/// Enum indicating the Authentication status
+enum AuthStatus {
+  /// Authenticated session
+  authenticated,
 
-  /// The error which was caught.
-  final Object error;
-}
+  /// Unauthenticated session
+  unauthenticated,
 
-/// {@template sign_up_failure}
-/// Thrown during the sign up process if a failure occurs.
-/// {@endtemplate}
-class SignUpFailure extends AuthException {
-  /// {@macro sign_up_failure}
-  const SignUpFailure(super.error);
-}
-
-/// {@template confirmarion_code_sign_up_failure}
-/// Thrown during the verification of the confiramtion code
-/// sign up process if a failure occurs.
-/// {@endtemplate}
-class ConfirmationCodeSignUpFailure extends AuthException {
-  /// {@macro confirmarion_code_sign_up_failure}
-  const ConfirmationCodeSignUpFailure(super.error);
-}
-
-/// {@template sign_in_failure}
-/// Thrown during the sign in process if a failure occurs.
-/// {@endtemplate}
-class SignInFailure extends AuthException {
-  /// {@macro sign_in_failure}
-  const SignInFailure(super.error);
-}
-
-/// {@template sign_out_failure}
-/// Thrown during the sign out process if a failure occurs.
-/// {@endtemplate}
-class SignOutFailure extends AuthException {
-  /// {@macro sign_out_failure}
-  const SignOutFailure(super.error);
+  /// Session expired
+  sessionExpired,
 }
 
 /// {@template auth_client}
-/// AWS Amplify auth client
+/// AWS Amplify auth client.
 /// {@endtemplate}
 class AuthClient {
   /// {@macro auth_client}
@@ -67,31 +35,52 @@ class AuthClient {
     required AuthCategory auth,
     required AmplifyHub hub,
   })  : _auth = auth,
-        _hub = hub;
+        _hub = hub {
+    _hub.listen([HubChannel.Auth], _onHubEvent);
+  }
 
   final AuthCategory _auth;
   final AmplifyHub _hub;
-  final _controller = BehaviorSubject<AmplifyUser>();
+  final _controller = BehaviorSubject<AuthStatus>();
 
-  /// Returns a stream of the current amplify user.
-  Stream<AmplifyUser> get user {
-    _hub.listen([HubChannel.Auth], (hubEvent) async {
-      if (hubEvent.eventName.isSignedIn) {
-        final user = await _auth.getCurrentUser();
-        _controller.add(
-          AmplifyUser(id: user.userId, email: user.username),
-        );
-      } else if (hubEvent.eventName.isSignedOut) {
-        _controller.add(AmplifyUser.anonymous);
-      } else {
-        await _controller.close();
+  /// Stream current [AuthStatus]
+  Stream<AuthStatus> get authStatus => _controller.stream;
+
+  void _onHubEvent(dynamic hubEvent) {
+    if (hubEvent is HubEvent) {
+      switch (hubEvent.eventName) {
+        case 'SIGNED_IN':
+          _controller.add(AuthStatus.authenticated);
+          break;
+        case 'SIGNED_OUT':
+          _controller.add(AuthStatus.unauthenticated);
+          break;
+
+        case 'SESSION_EXPIRED':
+          _controller.add(AuthStatus.sessionExpired);
+          break;
       }
-    });
+    }
+  }
 
-    return _controller.stream;
+  /// Returns whether the user is authenticated or not
+  ///
+  ///Throws a [FetchAuthenticatedUserFailure] if an exception occurs.
+  Future<bool> isUserAuthenticated() async {
+    try {
+      final currentSesion = await _auth.fetchAuthSession();
+      return currentSesion.isSignedIn;
+    } on AuthException catch (e) {
+      throw FetchAuthenticatedUserFailure(e);
+    } catch (e) {
+      throw FetchAuthenticatedUserFailure(e);
+    }
   }
 
   /// Creates a new user with the [email] and [password] variables.
+  ///
+  /// Throws a [SignUpFailure] if an exception occurs.
+  /// Throws a [UserAlreadyExistException] if email already exists.
   Future<void> signUp(
     String email,
     String password,
@@ -107,17 +96,29 @@ class AuthClient {
         password: password,
         options: options,
       );
+    } on UsernameExistsException catch (error, stackTrace) {
+      Error.throwWithStackTrace(UserAlreadyExistException(error), stackTrace);
+    } on AuthException catch (error, stackTrace) {
+      Error.throwWithStackTrace(SignUpFailure(error), stackTrace);
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(SignUpFailure(error), stackTrace);
     }
   }
 
   /// Confirm the sign up with a confirmation code.
-  Future<void> confirmSignUp(String email, String confirmationCode) async {
+  Future<void> confirmSignUp(
+    String email,
+    String confirmationCode,
+  ) async {
     try {
       await _auth.confirmSignUp(
         username: email,
         confirmationCode: confirmationCode,
+      );
+    } on AuthException catch (error, stackTrace) {
+      Error.throwWithStackTrace(
+        ConfirmationCodeSignUpFailure(error),
+        stackTrace,
       );
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(
@@ -128,32 +129,39 @@ class AuthClient {
   }
 
   /// Sign in with the provided [email] and [password].
+  ///
+  /// Throws a [UserDoesNotExistException] if [UserNotFoundException] occurs
+  /// (provided email is not correct).
+  /// Throws a [UserDoesNotExistException] if [NotAuthorizedException] occurs.
+  /// (provided email is correct, but the password isn't, or vice versa).
+  /// Throws a [SignInFailure] if an exception occurs.
   Future<void> signIn(String email, String password) async {
     try {
       await _auth.signIn(
         username: email,
         password: password,
       );
+    } on UserNotFoundException catch (error, stackTrace) {
+      Error.throwWithStackTrace(UserDoesNotExistException(error), stackTrace);
+    } on NotAuthorizedException catch (error, stackTrace) {
+      Error.throwWithStackTrace(UserDoesNotExistException(error), stackTrace);
+    } on AuthException catch (error, stackTrace) {
+      Error.throwWithStackTrace(SignInFailure(error), stackTrace);
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(SignInFailure(error), stackTrace);
     }
   }
 
   /// Sign out the current user.
+  ///
+  /// Throws a [SignOutFailure] if an exception occurs.
   Future<void> signOut() async {
     try {
       await _auth.signOut();
+    } on AuthException catch (error, stackTrace) {
+      Error.throwWithStackTrace(SignOutFailure(error), stackTrace);
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(SignOutFailure(error), stackTrace);
     }
   }
-}
-
-/// Extension to get HubEvent names.
-extension HubEventNameX on String {
-  /// Wether is signed in.
-  bool get isSignedIn => this == 'SIGNED_IN';
-
-  /// Wether is signed out.
-  bool get isSignedOut => this == 'SIGNED_OUT';
 }

@@ -26,7 +26,6 @@ class SignInState extends Equatable {
   SignInState copyWith({
     Email? email,
     Password? password,
-    ConfirmationCode? confirmationCode,
     FormzSubmissionStatus? status,
     bool? isValid,
   }) {
