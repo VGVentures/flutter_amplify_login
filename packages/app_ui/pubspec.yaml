@@ -14,5 +14,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mockingjay: ^0.3.0
   mocktail: ^0.3.0
   very_good_analysis: ^3.1.0

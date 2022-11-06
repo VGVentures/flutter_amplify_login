@@ -5,6 +5,7 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+import 'package:app_ui/app_ui.dart';
 import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_amplify_login/app/app.dart';
@@ -42,16 +43,12 @@ class App extends StatelessWidget {
 
 class AppView extends StatelessWidget {
   const AppView({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        appBarTheme: const AppBarTheme(color: Color(0xFF13B9FF)),
-        colorScheme: ColorScheme.fromSwatch(
-          accentColor: const Color(0xFF13B9FF),
-        ),
-      ),
+      themeMode: ThemeMode.dark,
+      theme: const AppTheme().themeData,
+      darkTheme: const AppDarkTheme().themeData,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
