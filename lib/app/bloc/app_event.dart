@@ -11,11 +11,11 @@ class AppSignOutRequested extends AppEvent {
   const AppSignOutRequested();
 }
 
-class AppUserChanged extends AppEvent {
-  const AppUserChanged(this.user);
+class AppAuthStatusChanged extends AppEvent {
+  const AppAuthStatusChanged(this.authStatus);
 
-  final AmplifyUser user;
+  final AuthStatus authStatus;
 
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [authStatus];
 }

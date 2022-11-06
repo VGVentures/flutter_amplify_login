@@ -10,82 +10,66 @@ import 'package:user_repository/user_repository.dart';
 
 class _MockUserRepository extends Mock implements UserRepository {}
 
-class _MockUser extends Mock implements AmplifyUser {}
-
 void main() {
   group('AppBloc', () {
-    final user = _MockUser();
     late UserRepository userRepository;
 
     setUp(() {
       userRepository = _MockUserRepository();
 
-      when(() => userRepository.user).thenAnswer((_) => Stream.empty());
+      when(() => userRepository.authStatus).thenAnswer((_) => Stream.empty());
     });
 
-    test('initial state is unauthenticated when user is anonymous', () {
+    test('initial state is unauthenticated when user is not authenticated', () {
       expect(
-        AppBloc(
-          userRepository: userRepository,
-          user: AmplifyUser.anonymous,
-        ).state,
+        AppBloc(userRepository: userRepository, isAuthenticated: false).state,
         AppState.unauthenticated(),
       );
     });
 
-    group('AppUserChanged', () {
-      late AmplifyUser returningUser;
-      late AmplifyUser newUser;
-
-      setUp(() {
-        returningUser = _MockUser();
-        newUser = _MockUser();
-        when(() => returningUser.id).thenReturn('id');
-        when(() => newUser.id).thenReturn('id');
-      });
-
+    group('AppAuthStatusChanged', () {
       blocTest<AppBloc, AppState>(
         'emits nothing when '
-        'state is unauthenticated and user is anonymous',
+        'state is unauthenticated and isAuthenticated is false',
         setUp: () {
-          when(() => userRepository.user).thenAnswer(
-            (_) => Stream.value(AmplifyUser.anonymous),
+          when(() => userRepository.authStatus).thenAnswer(
+            (_) => Stream.value(AuthStatus.unauthenticated),
           );
         },
         build: () => AppBloc(
           userRepository: userRepository,
-          user: user,
+          isAuthenticated: false,
         ),
         seed: AppState.unauthenticated,
         expect: () => <AppState>[],
       );
 
       blocTest<AppBloc, AppState>(
-        'emits authenticated when user is returning and not anonymous',
+        'emits authenticated when isAuthenticated',
         setUp: () {
-          when(() => userRepository.user).thenAnswer(
-            (_) => Stream.value(returningUser),
+          when(() => userRepository.authStatus).thenAnswer(
+            (_) => Stream.value(AuthStatus.authenticated),
           );
         },
         build: () => AppBloc(
           userRepository: userRepository,
-          user: user,
+          isAuthenticated: true,
         ),
-        expect: () => [AppState.authenticated(returningUser)],
+        expect: () => [AppState.authenticated()],
       );
 
       blocTest<AppBloc, AppState>(
-        'emits unauthenticated when user is anonymous',
+        'emits sessionExpired when the status is sessionExpired',
         setUp: () {
-          when(() => userRepository.user).thenAnswer(
-            (_) => Stream.value(AmplifyUser.anonymous),
+          when(() => userRepository.authStatus).thenAnswer(
+            (_) => Stream.value(AuthStatus.sessionExpired),
           );
         },
         build: () => AppBloc(
           userRepository: userRepository,
-          user: user,
+          isAuthenticated: true,
         ),
-        expect: () => [AppState.unauthenticated()],
+        expect: () => [AppState.sessionExpired()],
       );
     });
 
@@ -98,7 +82,7 @@ void main() {
         'calls logOut on UserRepository',
         build: () => AppBloc(
           userRepository: userRepository,
-          user: user,
+          isAuthenticated: true,
         ),
         act: (bloc) => bloc.add(AppSignOutRequested()),
         verify: (_) {
@@ -108,22 +92,22 @@ void main() {
     });
 
     group('close', () {
-      late StreamController<AmplifyUser> userController;
+      late StreamController<AuthStatus> authStatusController;
 
       setUp(() {
-        userController = StreamController<AmplifyUser>();
+        authStatusController = StreamController<AuthStatus>();
 
-        when(() => userRepository.user)
-            .thenAnswer((_) => userController.stream);
+        when(() => userRepository.authStatus)
+            .thenAnswer((_) => authStatusController.stream);
       });
 
       blocTest<AppBloc, AppState>(
-        'cancels UserRepository.user subscription',
+        'cancels UserRepository.authStatus subscription',
         build: () => AppBloc(
           userRepository: userRepository,
-          user: user,
+          isAuthenticated: true,
         ),
-        tearDown: () => expect(userController.hasListener, isFalse),
+        tearDown: () => expect(authStatusController.hasListener, isFalse),
       );
     });
   });

@@ -1,41 +1,28 @@
 part of 'app_bloc.dart';
 
-enum AppStatus {
-  onboardingRequired,
-  authenticated,
-  unauthenticated,
-}
+enum AppStatus { authenticated, unauthenticated, sessionExpired }
 
 class AppState extends Equatable {
   const AppState({
-    required this.status,
-    this.user = AmplifyUser.anonymous,
+    this.status = AppStatus.unauthenticated,
   });
 
-  const AppState.authenticated(AmplifyUser user)
-      : this(
-          status: AppStatus.authenticated,
-          user: user,
-        );
+  const AppState.authenticated() : this(status: AppStatus.authenticated);
 
   const AppState.unauthenticated() : this(status: AppStatus.unauthenticated);
 
+  const AppState.sessionExpired() : this(status: AppStatus.sessionExpired);
+
   final AppStatus status;
-  final AmplifyUser user;
 
   @override
-  List<Object?> get props => [
-        status,
-        user,
-      ];
+  List<Object?> get props => [status];
 
   AppState copyWith({
     AppStatus? status,
-    AmplifyUser? user,
   }) {
     return AppState(
       status: status ?? this.status,
-      user: user ?? this.user,
     );
   }
 }
