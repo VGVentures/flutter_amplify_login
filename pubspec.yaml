@@ -10,6 +10,8 @@ environment:
 dependencies:
   amplify_auth_cognito: ^0.6.9
   amplify_flutter: ^0.6.9
+  app_ui:
+    path: packages/app_ui
   auth_client:
     path: packages/auth_client
   bloc: ^8.1.0

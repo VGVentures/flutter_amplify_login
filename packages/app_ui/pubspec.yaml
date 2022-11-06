@@ -1,0 +1,19 @@
+name: app_ui
+description: A package which manage the common widgets of the app
+version: 0.1.0+1
+publish_to: none
+
+environment:
+  sdk: ">=2.18.0 <3.0.0"
+  flutter: 3.3.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockingjay: ^0.3.0
+  mocktail: ^0.3.0
+  very_good_analysis: ^3.1.0
