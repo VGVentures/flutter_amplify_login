@@ -65,3 +65,11 @@ class UserDoesNotExistException extends AuthenticationException {
   /// {@macro user_does_not_exits_failure}
   const UserDoesNotExistException(super.error);
 }
+
+/// {@template user_not_authorized_failure}
+/// Throw when sign in is not completed because user is not authorized.
+/// {@endtemplate}
+class UserNotAuthorizedException extends AuthenticationException {
+  /// {@macro user_not_authorized_failure}
+  const UserNotAuthorizedException(super.error);
+}
