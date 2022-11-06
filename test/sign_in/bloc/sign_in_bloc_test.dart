@@ -48,6 +48,7 @@ void main() {
         seed: () => SignInState(password: invalidPassword),
         expect: () => const <SignInState>[
           SignInState(
+            status: SignInStatus.edit,
             email: invalidEmail,
             password: invalidPassword,
           ),
@@ -61,6 +62,7 @@ void main() {
         seed: () => SignInState(password: validPassword),
         expect: () => const <SignInState>[
           SignInState(
+            status: SignInStatus.edit,
             email: invalidEmail,
             password: validPassword,
           ),
@@ -74,6 +76,7 @@ void main() {
         act: (bloc) => bloc.add(SignInEmailChanged(validEmailString)),
         expect: () => <SignInState>[
           SignInState(
+            status: SignInStatus.edit,
             email: validEmail,
             password: validPassword,
             isValid: true,
@@ -90,6 +93,7 @@ void main() {
         seed: () => SignInState(email: invalidEmail),
         expect: () => const <SignInState>[
           SignInState(
+            status: SignInStatus.edit,
             email: invalidEmail,
             password: invalidPassword,
           ),
@@ -103,6 +107,7 @@ void main() {
         seed: () => SignInState(email: validEmail),
         expect: () => const <SignInState>[
           SignInState(
+            status: SignInStatus.edit,
             email: validEmail,
             password: invalidPassword,
           ),
@@ -116,6 +121,7 @@ void main() {
         seed: () => SignInState(email: validEmail),
         expect: () => <SignInState>[
           SignInState(
+            status: SignInStatus.edit,
             password: validPassword,
             email: validEmail,
             isValid: true,
@@ -178,13 +184,13 @@ void main() {
         ),
         expect: () => const <SignInState>[
           SignInState(
-            status: FormzSubmissionStatus.inProgress,
+            status: SignInStatus.loading,
             email: validEmail,
             password: validPassword,
             isValid: true,
           ),
           SignInState(
-            status: FormzSubmissionStatus.success,
+            status: SignInStatus.success,
             email: validEmail,
             password: validPassword,
             isValid: true,
@@ -219,13 +225,13 @@ void main() {
         ),
         expect: () => const <SignInState>[
           SignInState(
-            status: FormzSubmissionStatus.inProgress,
+            status: SignInStatus.loading,
             email: validEmail,
             password: validPassword,
             isValid: true,
           ),
           SignInState(
-            status: FormzSubmissionStatus.failure,
+            status: SignInStatus.failure,
             email: validEmail,
             password: validPassword,
             isValid: true,

@@ -21,6 +21,7 @@ class AppTextField extends StatelessWidget {
     this.prefix,
     this.suffix,
     this.keyboardType,
+    this.obscureText = false,
     this.onChanged,
     this.onSubmitted,
     this.onTap,
@@ -75,6 +76,9 @@ class AppTextField extends StatelessWidget {
   /// Called when the text field has been tapped.
   final VoidCallback? onTap;
 
+  /// Obscure text when type a password.
+  final bool obscureText;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -89,6 +93,7 @@ class AppTextField extends StatelessWidget {
             controller: controller,
             inputFormatters: inputFormatters,
             keyboardType: keyboardType,
+            obscureText: obscureText,
             autocorrect: autocorrect,
             readOnly: readOnly,
             autofillHints: autoFillHints,
