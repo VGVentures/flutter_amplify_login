@@ -70,10 +70,16 @@ class AuthClient {
     try {
       final currentSesion = await _auth.fetchAuthSession();
       return currentSesion.isSignedIn;
-    } on AuthException catch (e) {
-      throw FetchAuthenticatedUserFailure(e);
-    } catch (e) {
-      throw FetchAuthenticatedUserFailure(e);
+    } on AuthException catch (error, stackTrace) {
+      Error.throwWithStackTrace(
+        FetchAuthenticatedUserFailure(error),
+        stackTrace,
+      );
+    } catch (error, stackTrace) {
+      Error.throwWithStackTrace(
+        FetchAuthenticatedUserFailure(error),
+        stackTrace,
+      );
     }
   }
 
@@ -144,7 +150,7 @@ class AuthClient {
     } on UserNotFoundException catch (error, stackTrace) {
       Error.throwWithStackTrace(UserDoesNotExistException(error), stackTrace);
     } on NotAuthorizedException catch (error, stackTrace) {
-      Error.throwWithStackTrace(UserDoesNotExistException(error), stackTrace);
+      Error.throwWithStackTrace(UserNotAuthorizedException(error), stackTrace);
     } on AuthException catch (error, stackTrace) {
       Error.throwWithStackTrace(SignInFailure(error), stackTrace);
     } catch (error, stackTrace) {

@@ -45,7 +45,8 @@ class UserRepository {
   /// Starts the Sign In flow.
   ///
   /// Throws a [SignInFailure] if [AuthenticationException] occurs.
-  /// Throws a [UserDoesNotExistException] if[UserDoesNotExistException] occurs.
+  /// Throws a [UserDoesNotExistException]
+  /// if [UserDoesNotExistException] occurs.
   Future<void> signIn({
     required String email,
     required String password,

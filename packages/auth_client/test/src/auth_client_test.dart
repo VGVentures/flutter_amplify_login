@@ -97,7 +97,7 @@ void main() {
             .thenThrow(NotAuthorizedException(''));
         expect(
           authClient.signIn(email, password),
-          throwsA(isA<UserDoesNotExistException>()),
+          throwsA(isA<UserNotAuthorizedException>()),
         );
       });
 
