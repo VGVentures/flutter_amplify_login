@@ -46,23 +46,6 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: _userRepository,
-      child: BlocProvider(
-        create: (context) => AppBloc(
-          userRepository: _userRepository,
-          isAuthenticated: _isAuthenticated,
-        ),
-        child: const AppView(),
-      ),
-    );
-  }
-}
-
-class AppView extends StatelessWidget {
-  const AppView({super.key});
-  @override
-  Widget build(BuildContext context) {
     return MaterialApp(
       themeMode: ThemeMode.dark,
       theme: const AppTheme().themeData,
