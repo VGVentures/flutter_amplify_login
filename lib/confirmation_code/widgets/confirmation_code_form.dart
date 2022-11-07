@@ -14,17 +14,9 @@ class ConfirmationCodeForm extends StatelessWidget {
   final String email;
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<ConfirmationCodeBloc>().state;
-    final theme = Theme.of(context).textTheme;
-
     return BlocListener<ConfirmationCodeBloc, ConfirmationCodeState>(
       listener: (context, state) {
         if (state.status == FormzSubmissionStatus.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Account created! Please sign in!'),
-            ),
-          );
           Navigator.of(context).push<void>(
             SignInPage.route(),
           );
@@ -38,29 +30,33 @@ class ConfirmationCodeForm extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: AppSpacing.xxlg),
-            Text(
-              'Add the confirmation code \nreceived on $email',
-              style: theme.bodyMedium,
-            ),
+            _ConfirmationCodeTitle(email: email),
             const SizedBox(height: AppSpacing.xxlg),
             const _ConfirmationCodeTextFieldSignUp(),
             const SizedBox(height: AppSpacing.xxlg),
-            AppButton(
-              key: const Key('signUp_signUpButton'),
-              onPressed: state.isValid
-                  ? () => context.read<ConfirmationCodeBloc>().add(
-                        ConfirmationCodeSubmitted(
-                          email,
-                          state.confirmationCode.value,
-                        ),
-                      )
-                  : null,
-              child: const Text('Confirm account'),
-            ),
+            _ConfirmationCodeButton(email: email),
             const SizedBox(height: AppSpacing.xxlg),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ConfirmationCodeTitle extends StatelessWidget {
+  const _ConfirmationCodeTitle({
+    required this.email,
+  });
+
+  final String email;
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context).textTheme;
+
+    return Text(
+      key: const Key('confirmationCodeForm_title'),
+      'Add the confirmation code \nreceived on $email',
+      style: theme.bodyMedium,
     );
   }
 }
@@ -81,6 +77,32 @@ class _ConfirmationCodeTextFieldSignUp extends StatelessWidget {
       onChanged: (code) => context.read<ConfirmationCodeBloc>().add(
             ConfirmationCodeChanged(code),
           ),
+    );
+  }
+}
+
+class _ConfirmationCodeButton extends StatelessWidget {
+  const _ConfirmationCodeButton({
+    required this.email,
+  });
+
+  final String email;
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<ConfirmationCodeBloc>().state;
+
+    return AppButton(
+      key: const Key('confirmationCodeForm_confirmationCodeButton'),
+      onPressed: state.isValid
+          ? () => context.read<ConfirmationCodeBloc>().add(
+                ConfirmationCodeSubmitted(
+                  email,
+                  state.confirmationCode.value,
+                ),
+              )
+          : null,
+      child: const Text('Confirm code'),
     );
   }
 }
