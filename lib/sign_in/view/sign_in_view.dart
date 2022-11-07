@@ -177,7 +177,9 @@ class _SingInButton extends StatelessWidget {
                 ),
               )
           : null,
-      child: const Text('Sign In'),
+      child: state.status == SignInStatus.loading
+          ? const CircularProgressIndicator()
+          : const Text('Sign In'),
     );
   }
 }

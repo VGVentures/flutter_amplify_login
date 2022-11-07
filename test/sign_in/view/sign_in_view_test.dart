@@ -9,6 +9,7 @@ import 'package:flutter_amplify_login/sign_in/view/sign_in_view.dart';
 import 'package:flutter_amplify_login/sign_up/sign_up.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:form_inputs/form_inputs.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/helpers.dart';
@@ -202,6 +203,24 @@ void main() {
 
       expect(find.byType(SnackBar), findsOneWidget);
     });
+
+    testWidgets(
+        'show CircularProgressIndicator in signIn button '
+        'when state is loading', (tester) async {
+      when(() => _signInBloc.state).thenReturn(
+        const SignInState(status: SignInStatus.loading),
+      );
+      await tester.pumpApp(
+        BlocProvider.value(
+          value: _signInBloc,
+          child: SignInView(),
+        ),
+      );
+      final signUpButton = tester.widget<AppButton>(
+        find.byKey(signInSignInButtonKey),
+      );
+      expect(signUpButton.child, isA<CircularProgressIndicator>());
+    });
   });
   group('adds', () {
     testWidgets('SignInEmailChanged when email changes', (tester) async {
@@ -247,6 +266,8 @@ void main() {
       when(() => _signInBloc.state).thenReturn(
         SignInState(
           isValid: true,
+          email: Email.dirty(testEmail),
+          password: Password.dirty(testPassword),
         ),
       );
 
@@ -257,12 +278,14 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byType(AppButton));
+      final button = find.byKey(signInSignInButtonKey);
+      await tester.ensureVisible(button);
+      await tester.tap(button);
       await tester.pumpAndSettle();
 
       verify(
         () => _signInBloc.add(
-          const SignInSubmitted(
+          SignInSubmitted(
             testEmail,
             testPassword,
           ),
