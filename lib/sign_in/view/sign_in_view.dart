@@ -26,14 +26,12 @@ class SignInView extends StatelessWidget {
           title: const Text('Sign In'),
         ),
         body: const Padding(
-          padding: EdgeInsets.fromLTRB(
-            AppSpacing.xlg,
-            AppSpacing.xxxlg,
-            AppSpacing.xlg,
-            AppSpacing.xxlg,
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.xlg,
           ),
           child: ScrollableColumn(
             children: [
+              SizedBox(height: AppSpacing.xxlg),
               _AWSLogo(),
               SizedBox(height: AppSpacing.xxlg),
               _TitleAndSubtitleSignIn(),
@@ -44,7 +42,8 @@ class SignInView extends StatelessWidget {
               SizedBox(height: AppSpacing.lg),
               _SingInButton(),
               Spacer(),
-              _NotAccountSignIn()
+              _NotAccountSignIn(),
+              SizedBox(height: AppSpacing.xxlg),
             ],
           ),
         ),
@@ -109,8 +108,15 @@ class _EmailTextFieldSignIn extends StatelessWidget {
   }
 }
 
-class _PasswordFieldSignIn extends StatelessWidget {
+class _PasswordFieldSignIn extends StatefulWidget {
   const _PasswordFieldSignIn();
+
+  @override
+  State<_PasswordFieldSignIn> createState() => _PasswordFieldSignInState();
+}
+
+class _PasswordFieldSignInState extends State<_PasswordFieldSignIn> {
+  bool _isObscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -118,8 +124,16 @@ class _PasswordFieldSignIn extends StatelessWidget {
       key: const Key('signIn_passwordTextField'),
       hintText: 'Password',
       autoFillHints: const [AutofillHints.password],
-      obscureText: true,
+      obscureText: _isObscure,
       prefix: const Icon(Icons.lock),
+      suffix: IconButton(
+        icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
+        onPressed: () {
+          setState(() {
+            _isObscure = !_isObscure;
+          });
+        },
+      ),
       onChanged: (password) => context.read<SignInBloc>().add(
             SignInPasswordChanged(password),
           ),

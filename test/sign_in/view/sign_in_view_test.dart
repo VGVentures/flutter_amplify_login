@@ -221,6 +221,29 @@ void main() {
       );
       expect(signUpButton.child, isA<CircularProgressIndicator>());
     });
+
+    testWidgets('password change obscure text when IconButton is pressed ',
+        (tester) async {
+      when(() => _signInBloc.state).thenReturn(
+        const SignInState(status: SignInStatus.loading),
+      );
+      await tester.pumpApp(
+        BlocProvider.value(
+          value: _signInBloc,
+          child: SignInView(),
+        ),
+      );
+      final iconVisibility = find.byIcon(Icons.visibility);
+      final iconVisibilityOff = find.byIcon(Icons.visibility_off);
+      final iconButton = find.byType(IconButton);
+
+      await tester.ensureVisible(iconButton);
+      await tester.tap(iconButton);
+      await tester.pump();
+
+      expect(iconVisibilityOff, findsOneWidget);
+      expect(iconVisibility, findsNothing);
+    });
   });
   group('adds', () {
     testWidgets('SignInEmailChanged when email changes', (tester) async {
