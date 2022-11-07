@@ -1,31 +1,42 @@
-// ignore_for_file: public_member_api_docs,
 part of 'sign_up_bloc.dart';
+
+enum SignUpStatus { initial, loading, success, failure, edit }
 
 class SignUpState extends Equatable {
   const SignUpState({
     this.email = const Email.pure(),
     this.password = const Password.pure(),
-    this.status = FormzSubmissionStatus.initial,
+    this.formStatus = FormzSubmissionStatus.initial,
+    this.status = SignUpStatus.initial,
     this.isValid = false,
   });
 
   final Email email;
   final Password password;
-  final FormzSubmissionStatus status;
+  final FormzSubmissionStatus formStatus;
+  final SignUpStatus status;
   final bool isValid;
 
   @override
-  List<Object> get props => [email, password, status, isValid];
+  List<Object> get props => [
+        email,
+        password,
+        formStatus,
+        status,
+        isValid,
+      ];
 
   SignUpState copyWith({
     Email? email,
     Password? password,
-    FormzSubmissionStatus? status,
+    FormzSubmissionStatus? formStatus,
+    SignUpStatus? status,
     bool? isValid,
   }) {
     return SignUpState(
       email: email ?? this.email,
       password: password ?? this.password,
+      formStatus: formStatus ?? this.formStatus,
       status: status ?? this.status,
       isValid: isValid ?? this.isValid,
     );

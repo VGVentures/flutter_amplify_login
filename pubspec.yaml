@@ -26,6 +26,7 @@ dependencies:
   form_inputs:
     path: packages/form_inputs
   intl: ^0.17.0
+  modal_bottom_sheet: ^2.1.2
   user_repository:
     path: packages/user_repository
 

@@ -164,7 +164,7 @@ void main() {
       );
 
       blocTest<SignUpBloc, SignUpState>(
-        'emits [submissionInProgress, submissionSuccess] '
+        'emits [SignUpStatus.loading, SignUpStatus.success] '
         'when signUp succeeds',
         build: () => SignUpBloc(userRepository: userRepository),
         seed: () => SignUpState(
@@ -180,13 +180,13 @@ void main() {
         ),
         expect: () => const <SignUpState>[
           SignUpState(
-            status: FormzSubmissionStatus.inProgress,
+            status: SignUpStatus.loading,
             email: validEmail,
             password: validPassword,
             isValid: true,
           ),
           SignUpState(
-            status: FormzSubmissionStatus.success,
+            status: SignUpStatus.success,
             email: validEmail,
             password: validPassword,
             isValid: true,
@@ -195,7 +195,7 @@ void main() {
       );
 
       blocTest<SignUpBloc, SignUpState>(
-        'emits [submissionInProgress, submissionFailure] '
+        'emits [SignUpStatus.loading, SignUpStatus.failure] '
         'when signUp fails',
         setUp: () {
           when(
@@ -221,13 +221,13 @@ void main() {
         ),
         expect: () => const <SignUpState>[
           SignUpState(
-            status: FormzSubmissionStatus.inProgress,
+            status: SignUpStatus.loading,
             email: validEmail,
             password: validPassword,
             isValid: true,
           ),
           SignUpState(
-            status: FormzSubmissionStatus.failure,
+            status: SignUpStatus.failure,
             email: validEmail,
             password: validPassword,
             isValid: true,

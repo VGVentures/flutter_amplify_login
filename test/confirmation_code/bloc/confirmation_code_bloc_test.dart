@@ -11,7 +11,7 @@ import 'package:user_repository/user_repository.dart';
 class _MockUserRepository extends Mock implements UserRepository {}
 
 void main() {
-  const validConfirmationCodeString = '12345';
+  const validConfirmationCodeString = '123456';
   const validConfirmationCode =
       ConfirmationCode.dirty(validConfirmationCodeString);
 

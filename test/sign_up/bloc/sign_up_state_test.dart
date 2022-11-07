@@ -18,7 +18,14 @@ void main() {
 
     test('returns object with updated status when status is passed', () {
       expect(
-        SignUpState().copyWith(status: FormzSubmissionStatus.initial),
+        SignUpState().copyWith(status: SignUpStatus.initial),
+        SignUpState(),
+      );
+    });
+
+    test('returns object with updated formStatus when status is passed', () {
+      expect(
+        SignUpState().copyWith(formStatus: FormzSubmissionStatus.initial),
         SignUpState(),
       );
     });
