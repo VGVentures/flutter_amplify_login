@@ -1,7 +1,6 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_amplify_login/confirmation_code/confirmation_code.dart';
-import 'package:flutter_amplify_login/sign_in/view/sign_in_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_inputs/form_inputs.dart';
 
@@ -17,14 +16,15 @@ class ConfirmationCodeForm extends StatelessWidget {
     return BlocListener<ConfirmationCodeBloc, ConfirmationCodeState>(
       listener: (context, state) {
         if (state.status == FormzSubmissionStatus.success) {
-          Navigator.of(context).push<void>(
-            SignInPage.route(),
-          );
+          Navigator.of(context).pop();
         }
       },
       child: Padding(
         key: const Key('confirmationCodeForm_confirmationCodeModal'),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: MediaQuery.of(context).viewInsets.copyWith(
+              left: AppSpacing.lg,
+              right: AppSpacing.lg,
+            ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

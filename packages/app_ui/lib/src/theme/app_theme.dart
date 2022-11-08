@@ -38,6 +38,7 @@ class AppTheme {
       iconTheme: _iconTheme,
       elevation: 1,
       backgroundColor: AppColors.primary,
+      foregroundColor: AppColors.black,
       systemOverlayStyle: const SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.light,
@@ -47,7 +48,7 @@ class AppTheme {
 
   IconThemeData get _iconTheme {
     return const IconThemeData(
-      color: AppColors.white,
+      color: AppColors.black,
     );
   }
 

@@ -8,13 +8,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:user_repository/user_repository.dart';
 
-class SignUpView extends StatelessWidget {
+class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
 
   @override
+  State<SignUpView> createState() => _SignUpViewState();
+}
+
+class _SignUpViewState extends State<SignUpView> {
+  @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpBloc, SignUpState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state.status == SignUpStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -22,7 +27,9 @@ class SignUpView extends StatelessWidget {
             ),
           );
         } else if (state.status == SignUpStatus.success) {
-          showMaterialModalBottomSheet<void>(
+          final navigator = Navigator.of(context);
+
+          await showMaterialModalBottomSheet<void>(
             context: context,
             builder: (context) => BlocProvider(
               create: (_) => ConfirmationCodeBloc(
@@ -31,6 +38,8 @@ class SignUpView extends StatelessWidget {
               child: ConfirmationCodeForm(email: state.email.value),
             ),
           );
+
+          navigator.pop();
         }
       },
       child: Scaffold(

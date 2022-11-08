@@ -12,7 +12,7 @@ import 'package:flutter_amplify_login/l10n/l10n.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockingjay/mockingjay.dart';
 import 'package:user_repository/user_repository.dart';
 
 class MockUserRepository extends Mock implements UserRepository {}
@@ -27,6 +27,7 @@ extension PumpApp on WidgetTester {
     Widget widgetUnderTest, {
     UserRepository? userRepository,
     AppBloc? appBloc,
+    MockNavigator? navigator,
   }) {
     return pumpWidget(
       RepositoryProvider.value(
@@ -40,7 +41,12 @@ extension PumpApp on WidgetTester {
               GlobalMaterialLocalizations.delegate,
             ],
             supportedLocales: AppLocalizations.supportedLocales,
-            home: widgetUnderTest,
+            home: navigator == null
+                ? Scaffold(body: widgetUnderTest)
+                : MockNavigatorProvider(
+                    navigator: navigator,
+                    child: Scaffold(body: widgetUnderTest),
+                  ),
           ),
         ),
       ),
