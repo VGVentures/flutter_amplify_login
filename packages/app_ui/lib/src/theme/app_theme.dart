@@ -47,7 +47,7 @@ class AppTheme {
 
   IconThemeData get _iconTheme {
     return const IconThemeData(
-      color: AppColors.secondaryLight,
+      color: AppColors.white,
     );
   }
 
