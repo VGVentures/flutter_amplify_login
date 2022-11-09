@@ -19,6 +19,7 @@ class _SignUpViewState extends State<SignUpView> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpBloc, SignUpState>(
+      listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) async {
         if (state.status == SignUpStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -39,6 +40,8 @@ class _SignUpViewState extends State<SignUpView> {
             ),
           );
 
+          // Navigate back when the confirmation code is successful to return to
+          // the sign-in page.
           navigator.pop();
         }
       },
