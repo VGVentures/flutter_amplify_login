@@ -4,11 +4,10 @@ import 'package:app_ui/app_ui.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_amplify_login/confirmation_code/confirmation_code.dart';
-import 'package:flutter_amplify_login/sign_in/sign_in.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:form_inputs/form_inputs.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockingjay/mockingjay.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../helpers/helpers.dart';
@@ -300,7 +299,7 @@ void main() {
   });
 
   group('navigates', () {
-    testWidgets('to SignInPage when status is [ FormzSubmissionStatus.success]',
+    testWidgets('back when status is [FormzSubmissionStatus.success]',
         (tester) async {
       whenListen(
         _confirmationCodeBloc,
@@ -309,11 +308,12 @@ void main() {
           ConfirmationCodeState(status: FormzSubmissionStatus.success),
         ]),
       );
+
       await tester.pumpApp(
         Builder(
           builder: (context) => ElevatedButton(
             key: const Key('showModal_button'),
-            onPressed: () => showMaterialModalBottomSheet<void>(
+            onPressed: () async => showMaterialModalBottomSheet<void>(
               context: context,
               builder: (context) => BlocProvider.value(
                 value: _confirmationCodeBloc,
@@ -329,7 +329,7 @@ void main() {
       await tester.tap(find.byKey(Key('showModal_button')));
       await tester.pumpAndSettle();
 
-      expect(find.byType(SignInPage), findsOneWidget);
+      expect(find.byType(ConfirmationCodeForm), findsNothing);
     });
   });
 }

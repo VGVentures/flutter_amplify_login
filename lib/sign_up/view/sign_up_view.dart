@@ -13,7 +13,7 @@ class SignUpView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<SignUpBloc, SignUpState>(
       listenWhen: (previous, current) => previous.status != current.status,
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state.status == SignUpStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -21,12 +21,18 @@ class SignUpView extends StatelessWidget {
             ),
           );
         } else if (state.status == SignUpStatus.success) {
-          showMaterialModalBottomSheet<void>(
+          final navigator = Navigator.of(context);
+
+          await showMaterialModalBottomSheet<void>(
             context: context,
             builder: (context) => ConfirmationCodePage(
               email: state.email.value,
             ),
           );
+
+          // Navigate back when the confirmation code is successful to return to
+          // the sign-in page.
+          navigator.pop();
         }
       },
       child: Scaffold(

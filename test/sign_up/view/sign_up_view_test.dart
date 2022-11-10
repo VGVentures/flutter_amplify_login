@@ -8,7 +8,7 @@ import 'package:flutter_amplify_login/sign_up/sign_up.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:form_inputs/form_inputs.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockingjay/mockingjay.dart';
 
 import '../../helpers/helpers.dart';
 
@@ -392,6 +392,34 @@ void main() {
           SignUpPasswordVisibilityToggled(),
         ),
       ).called(1);
+    });
+  });
+
+  group('navigates', () {
+    testWidgets('when status is SignUpStatus.success', (tester) async {
+      final navigator = MockNavigator();
+
+      when(() => navigator.push<void>(any())).thenAnswer((invocation) async {});
+
+      whenListen(
+        _signUpBloc,
+        Stream.fromIterable(const <SignUpState>[
+          SignUpState(status: SignUpStatus.loading),
+          SignUpState(status: SignUpStatus.success),
+        ]),
+      );
+
+      await tester.pumpApp(
+        BlocProvider.value(
+          value: _signUpBloc,
+          child: SignUpView(),
+        ),
+        navigator: navigator,
+      );
+
+      await tester.pumpAndSettle();
+
+      verify(navigator.pop).called(1);
     });
   });
 }

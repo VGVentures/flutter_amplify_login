@@ -25,10 +25,6 @@ void main() {
       expect(SignInPage.page(), isA<MaterialPage<void>>());
     });
 
-    test('has a route', () {
-      expect(SignInPage.route(), isA<MaterialPageRoute<void>>());
-    });
-
     testWidgets('renders SignInView', (tester) async {
       await tester.pumpApp(
         BlocProvider.value(
