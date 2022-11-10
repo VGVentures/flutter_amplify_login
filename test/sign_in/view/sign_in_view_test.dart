@@ -270,6 +270,7 @@ void main() {
       expect(passwordTextField.obscureText, true);
     });
   });
+
   group('adds', () {
     testWidgets('SignInEmailChanged when email changes', (tester) async {
       await tester.pumpApp(

@@ -30,8 +30,9 @@ void main() {
 
   setUp(() {
     _confirmationCodeBloc = _MockConfirmationCodeBloc();
-    when(() => _confirmationCodeBloc.state)
-        .thenAnswer((invocation) => ConfirmationCodeState());
+    when(() => _confirmationCodeBloc.state).thenReturn(
+      ConfirmationCodeState(),
+    );
   });
 
   group('renders', () {

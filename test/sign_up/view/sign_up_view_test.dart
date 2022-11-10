@@ -109,9 +109,6 @@ void main() {
 
     testWidgets('disable sign up button when status is not validated',
         (tester) async {
-      when(() => _signUpBloc.state).thenReturn(
-        const SignUpState(),
-      );
       await tester.pumpApp(
         BlocProvider.value(
           value: _signUpBloc,
@@ -126,9 +123,6 @@ void main() {
 
     testWidgets('disable sign up button when invalid email is added',
         (tester) async {
-      when(() => _signUpBloc.state).thenReturn(
-        const SignUpState(),
-      );
       await tester.pumpApp(
         BlocProvider.value(
           value: _signUpBloc,
@@ -149,9 +143,6 @@ void main() {
 
     testWidgets('disable sign up button when invalid password is added',
         (tester) async {
-      when(() => _signUpBloc.state).thenReturn(
-        const SignUpState(),
-      );
       await tester.pumpApp(
         BlocProvider.value(
           value: _signUpBloc,
