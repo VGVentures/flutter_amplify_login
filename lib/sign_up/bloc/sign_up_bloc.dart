@@ -14,6 +14,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     on<SignUpEmailChanged>(_onEmailChanged);
     on<SignUpPasswordChanged>(_onPasswordChanged);
     on<SignUpSubmitted>(_onSignUpSubmitted);
+    on<SignUpPasswordVisibilityToggled>(_onSignUpPasswordVisibilityToggled);
   }
 
   final UserRepository _userRepository;
@@ -49,16 +50,23 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     Emitter<SignUpState> emit,
   ) async {
     if (!state.isValid) return;
-    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+    emit(state.copyWith(status: SignUpStatus.loading));
     try {
       await _userRepository.signUp(
         email: event.email,
         password: event.password,
       );
-      emit(state.copyWith(status: FormzSubmissionStatus.success));
+      emit(state.copyWith(status: SignUpStatus.success));
     } catch (error, stackTrace) {
-      emit(state.copyWith(status: FormzSubmissionStatus.failure));
+      emit(state.copyWith(status: SignUpStatus.failure));
       addError(error, stackTrace);
     }
+  }
+
+  Future<void> _onSignUpPasswordVisibilityToggled(
+    SignUpPasswordVisibilityToggled event,
+    Emitter<SignUpState> emit,
+  ) async {
+    emit(state.copyWith(isObscure: !state.isObscure));
   }
 }

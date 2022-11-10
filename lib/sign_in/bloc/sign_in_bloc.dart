@@ -14,6 +14,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     on<SignInEmailChanged>(_onEmailChanged);
     on<SignInPasswordChanged>(_onPasswordChanged);
     on<SignInSubmitted>(_onSignInSubmitted);
+    on<SignInPasswordVisibilityToggled>(_onSignInPasswordVisibilityToggled);
   }
 
   final UserRepository _userRepository;
@@ -62,5 +63,12 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       emit(state.copyWith(status: SignInStatus.failure));
       addError(error, stackTrace);
     }
+  }
+
+  Future<void> _onSignInPasswordVisibilityToggled(
+    SignInPasswordVisibilityToggled event,
+    Emitter<SignInState> emit,
+  ) async {
+    emit(state.copyWith(isObscure: !state.isObscure));
   }
 }

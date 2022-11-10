@@ -21,8 +21,6 @@ class ConfirmationCode
   ConfirmationCodeValidationError? validator(
     String value,
   ) {
-    return value.length > 3 && value.isNotEmpty
-        ? null
-        : ConfirmationCodeValidationError.invalid;
+    return value.length == 6 ? null : ConfirmationCodeValidationError.invalid;
   }
 }
