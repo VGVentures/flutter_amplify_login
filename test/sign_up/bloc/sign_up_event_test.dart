@@ -42,5 +42,14 @@ void main() {
         );
       });
     });
+
+    group('SignUpPasswordVisibilityToggled', () {
+      test('supports value comparisons', () {
+        expect(
+          SignUpPasswordVisibilityToggled(),
+          SignUpPasswordVisibilityToggled(),
+        );
+      });
+    });
   });
 }

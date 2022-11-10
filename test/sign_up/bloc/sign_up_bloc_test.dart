@@ -243,7 +243,7 @@ void main() {
         build: () => SignUpBloc(userRepository: userRepository),
         seed: () => SignUpState(isObscure: false),
         act: (bloc) => bloc.add(
-          SignUpPasswordVisibilityToggled(isObscure: true),
+          SignUpPasswordVisibilityToggled(),
         ),
         expect: () => const <SignUpState>[
           SignUpState(),
@@ -256,7 +256,7 @@ void main() {
         build: () => SignUpBloc(userRepository: userRepository),
         seed: () => const SignUpState(),
         act: (bloc) => bloc.add(
-          SignUpPasswordVisibilityToggled(isObscure: false),
+          SignUpPasswordVisibilityToggled(),
         ),
         expect: () => const <SignUpState>[
           SignUpState(isObscure: false),

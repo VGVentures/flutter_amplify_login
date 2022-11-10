@@ -44,6 +44,14 @@ void main() {
       );
     });
 
+    test('returns object with updated isObscured when isObscured is passed',
+        () {
+      expect(
+        SignInState().copyWith(isObscure: false),
+        SignInState(isObscure: false),
+      );
+    });
+
     test('returns object with updated valid when isValid is passed', () {
       expect(
         SignInState().copyWith(isValid: true),

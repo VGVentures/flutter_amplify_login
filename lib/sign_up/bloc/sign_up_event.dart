@@ -33,12 +33,8 @@ class SignUpSubmitted extends SignUpEvent {
 }
 
 class SignUpPasswordVisibilityToggled extends SignUpEvent {
-  const SignUpPasswordVisibilityToggled({
-    required this.isObscure,
-  });
-
-  final bool isObscure;
+  const SignUpPasswordVisibilityToggled();
 
   @override
-  List<Object?> get props => [isObscure];
+  List<Object?> get props => [];
 }

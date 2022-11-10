@@ -67,6 +67,6 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     SignUpPasswordVisibilityToggled event,
     Emitter<SignUpState> emit,
   ) async {
-    emit(state.copyWith(isObscure: event.isObscure));
+    emit(state.copyWith(isObscure: !state.isObscure));
   }
 }

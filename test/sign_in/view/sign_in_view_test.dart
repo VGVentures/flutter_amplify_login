@@ -363,7 +363,7 @@ void main() {
 
       verify(
         () => _signInBloc.add(
-          SignInPasswordVisibilityToggled(isObscure: false),
+          SignInPasswordVisibilityToggled(),
         ),
       ).called(1);
     });
@@ -372,7 +372,7 @@ void main() {
         'SignInPasswordVisibilityToggled when visibilityOff icon is is pressed',
         (tester) async {
       when(() => _signInBloc.state).thenReturn(
-        const SignInState(status: SignInStatus.loading),
+        const SignInState(status: SignInStatus.loading, isObscure: false),
       );
 
       when(() => _signInBloc.state).thenReturn(
@@ -392,9 +392,7 @@ void main() {
       await tester.pump();
 
       verify(
-        () => _signInBloc.add(
-          SignInPasswordVisibilityToggled(isObscure: true),
-        ),
+        () => _signInBloc.add(SignInPasswordVisibilityToggled()),
       ).called(1);
     });
   });

@@ -360,9 +360,7 @@ void main() {
       await tester.pump();
 
       verify(
-        () => _signUpBloc.add(
-          SignUpPasswordVisibilityToggled(isObscure: false),
-        ),
+        () => _signUpBloc.add(SignUpPasswordVisibilityToggled()),
       ).called(1);
     });
 
@@ -391,7 +389,7 @@ void main() {
 
       verify(
         () => _signUpBloc.add(
-          SignUpPasswordVisibilityToggled(isObscure: true),
+          SignUpPasswordVisibilityToggled(),
         ),
       ).called(1);
     });

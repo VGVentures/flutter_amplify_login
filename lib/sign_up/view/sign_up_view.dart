@@ -128,7 +128,7 @@ class _PasswordFieldSignUp extends StatelessWidget {
       suffix: IconButton(
         icon: Icon(isObscure ? Icons.visibility : Icons.visibility_off),
         onPressed: () => context.read<SignUpBloc>().add(
-              SignUpPasswordVisibilityToggled(isObscure: !isObscure),
+              const SignUpPasswordVisibilityToggled(),
             ),
       ),
       onChanged: (password) => context.read<SignUpBloc>().add(
