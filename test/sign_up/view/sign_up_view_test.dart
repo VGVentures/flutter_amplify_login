@@ -3,6 +3,7 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_amplify_login/confirmation_code/confirmation_code.dart';
 import 'package:flutter_amplify_login/sign_up/sign_up.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,8 +29,6 @@ void main() {
   const signUpViewEmailTextFieldKey = Key('signUp_emailTextField');
   const signUpViewPasswordTextFieldKey = Key('signUp_passwordTextField');
   const signUpSignUpButtonKey = Key('signUp_signUpButton');
-  const confirmationCodeModalKey =
-      Key('confirmationCodeForm_confirmationCodeModal');
 
   setUp(() {
     _signUpBloc = _MockSignUpBloc();
@@ -192,7 +191,7 @@ void main() {
       expect(find.byType(SnackBar), findsOneWidget);
     });
 
-    testWidgets('failure ConfirmationCodeForm when submission succeeds',
+    testWidgets('failure ConfirmationCodePage when submission succeeds',
         (tester) async {
       whenListen(
         _signUpBloc,
@@ -210,7 +209,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(confirmationCodeModalKey), findsOneWidget);
+      expect(find.byType(ConfirmationCodePage), findsOneWidget);
     });
 
     testWidgets(

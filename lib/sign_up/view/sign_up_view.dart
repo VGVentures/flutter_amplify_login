@@ -1,12 +1,10 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_amplify_login/confirmation_code/bloc/confirmation_code_bloc.dart';
-import 'package:flutter_amplify_login/confirmation_code/widgets/confirmation_code_form.dart';
+import 'package:flutter_amplify_login/confirmation_code/confirmation_code.dart';
 import 'package:flutter_amplify_login/generated/generated.dart';
 import 'package:flutter_amplify_login/sign_up/sign_up.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:user_repository/user_repository.dart';
 
 class SignUpView extends StatelessWidget {
   const SignUpView({super.key});
@@ -14,6 +12,7 @@ class SignUpView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpBloc, SignUpState>(
+      listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
         if (state.status == SignUpStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -24,11 +23,8 @@ class SignUpView extends StatelessWidget {
         } else if (state.status == SignUpStatus.success) {
           showMaterialModalBottomSheet<void>(
             context: context,
-            builder: (context) => BlocProvider(
-              create: (_) => ConfirmationCodeBloc(
-                userRepository: context.read<UserRepository>(),
-              ),
-              child: ConfirmationCodeForm(email: state.email.value),
+            builder: (context) => ConfirmationCodePage(
+              email: state.email.value,
             ),
           );
         }
