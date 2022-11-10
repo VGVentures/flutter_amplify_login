@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'sign_up_bloc.dart';
 
 enum SignUpStatus { initial, loading, success, failure, edit }
@@ -9,6 +10,7 @@ class SignUpState extends Equatable {
     this.formStatus = FormzSubmissionStatus.initial,
     this.status = SignUpStatus.initial,
     this.isValid = false,
+    this.isObscure = true,
   });
 
   final Email email;
@@ -16,6 +18,7 @@ class SignUpState extends Equatable {
   final FormzSubmissionStatus formStatus;
   final SignUpStatus status;
   final bool isValid;
+  final bool isObscure;
 
   @override
   List<Object> get props => [
@@ -24,6 +27,7 @@ class SignUpState extends Equatable {
         formStatus,
         status,
         isValid,
+        isObscure,
       ];
 
   SignUpState copyWith({
@@ -32,6 +36,7 @@ class SignUpState extends Equatable {
     FormzSubmissionStatus? formStatus,
     SignUpStatus? status,
     bool? isValid,
+    bool? isObscure,
   }) {
     return SignUpState(
       email: email ?? this.email,
@@ -39,6 +44,7 @@ class SignUpState extends Equatable {
       formStatus: formStatus ?? this.formStatus,
       status: status ?? this.status,
       isValid: isValid ?? this.isValid,
+      isObscure: isObscure ?? this.isObscure,
     );
   }
 }

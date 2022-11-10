@@ -1,21 +1,14 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_amplify_login/confirmation_code/bloc/confirmation_code_bloc.dart';
-import 'package:flutter_amplify_login/confirmation_code/widgets/confirmation_code_form.dart';
+import 'package:flutter_amplify_login/confirmation_code/confirmation_code.dart';
 import 'package:flutter_amplify_login/generated/generated.dart';
 import 'package:flutter_amplify_login/sign_up/sign_up.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:user_repository/user_repository.dart';
 
-class SignUpView extends StatefulWidget {
+class SignUpView extends StatelessWidget {
   const SignUpView({super.key});
 
-  @override
-  State<SignUpView> createState() => _SignUpViewState();
-}
-
-class _SignUpViewState extends State<SignUpView> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpBloc, SignUpState>(
@@ -32,11 +25,8 @@ class _SignUpViewState extends State<SignUpView> {
 
           await showMaterialModalBottomSheet<void>(
             context: context,
-            builder: (context) => BlocProvider(
-              create: (_) => ConfirmationCodeBloc(
-                userRepository: context.read<UserRepository>(),
-              ),
-              child: ConfirmationCodeForm(email: state.email.value),
+            builder: (context) => ConfirmationCodePage(
+              email: state.email.value,
             ),
           );
 
@@ -128,31 +118,24 @@ class _EmailTextFieldSignUp extends StatelessWidget {
   }
 }
 
-class _PasswordFieldSignUp extends StatefulWidget {
+class _PasswordFieldSignUp extends StatelessWidget {
   const _PasswordFieldSignUp();
 
   @override
-  State<_PasswordFieldSignUp> createState() => _PasswordFieldSignUpState();
-}
-
-class _PasswordFieldSignUpState extends State<_PasswordFieldSignUp> {
-  bool _isObscure = true;
-
-  @override
   Widget build(BuildContext context) {
+    final isObscure = context.select((SignUpBloc bloc) => bloc.state.isObscure);
+
     return AppTextField(
       key: const Key('signUp_passwordTextField'),
       hintText: 'Password',
       autoFillHints: const [AutofillHints.password],
-      obscureText: _isObscure,
+      obscureText: isObscure,
       prefix: const Icon(Icons.lock),
       suffix: IconButton(
-        icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
-        onPressed: () {
-          setState(() {
-            _isObscure = !_isObscure;
-          });
-        },
+        icon: Icon(isObscure ? Icons.visibility : Icons.visibility_off),
+        onPressed: () => context.read<SignUpBloc>().add(
+              const SignUpPasswordVisibilityToggled(),
+            ),
       ),
       onChanged: (password) => context.read<SignUpBloc>().add(
             SignUpPasswordChanged(password),

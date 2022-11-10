@@ -22,13 +22,6 @@ void main() {
     });
 
     group('validator', () {
-      test('returns invalid error when confirmation code is empty', () {
-        expect(
-          ConfirmationCode.dirty().error,
-          ConfirmationCodeValidationError.invalid,
-        );
-      });
-
       test('returns invalid error when confirmation code length is less than 3',
           () {
         expect(

@@ -5,6 +5,8 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_amplify_login/confirmation_code/bloc/confirmation_code_bloc.dart';
 import 'package:flutter_amplify_login/confirmation_code/widgets/confirmation_code_form.dart';
+import 'package:flutter_amplify_login/confirmation_code/confirmation_code.dart';
+import 'package:flutter_amplify_login/sign_in/sign_in.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:form_inputs/form_inputs.dart';
@@ -31,8 +33,9 @@ void main() {
 
   setUp(() {
     _confirmationCodeBloc = _MockConfirmationCodeBloc();
-    when(() => _confirmationCodeBloc.state)
-        .thenAnswer((invocation) => ConfirmationCodeState());
+    when(() => _confirmationCodeBloc.state).thenReturn(
+      ConfirmationCodeState(),
+    );
   });
 
   group('renders', () {
@@ -91,7 +94,9 @@ void main() {
         'ConfirmationCodeForm code textField with error text '
         'when code number is not valid', (tester) async {
       when(() => _confirmationCodeBloc.state).thenReturn(
-        ConfirmationCodeState(status: FormzSubmissionStatus.failure),
+        ConfirmationCodeState(
+          status: FormzSubmissionStatus.failure,
+        ),
       );
 
       await tester.pumpApp(

@@ -235,5 +235,33 @@ void main() {
         ],
       );
     });
+
+    group('SignUpPasswordVisibilityToggled', () {
+      blocTest<SignUpBloc, SignUpState>(
+        'emits isObscure true when password visibility is changed',
+        setUp: () {},
+        build: () => SignUpBloc(userRepository: userRepository),
+        seed: () => SignUpState(isObscure: false),
+        act: (bloc) => bloc.add(
+          SignUpPasswordVisibilityToggled(),
+        ),
+        expect: () => const <SignUpState>[
+          SignUpState(),
+        ],
+      );
+
+      blocTest<SignUpBloc, SignUpState>(
+        'emits isObscure false when password visibility is changed',
+        setUp: () {},
+        build: () => SignUpBloc(userRepository: userRepository),
+        seed: () => const SignUpState(),
+        act: (bloc) => bloc.add(
+          SignUpPasswordVisibilityToggled(),
+        ),
+        expect: () => const <SignUpState>[
+          SignUpState(isObscure: false),
+        ],
+      );
+    });
   });
 }
