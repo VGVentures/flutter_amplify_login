@@ -112,31 +112,24 @@ class _EmailTextFieldSignUp extends StatelessWidget {
   }
 }
 
-class _PasswordFieldSignUp extends StatefulWidget {
+class _PasswordFieldSignUp extends StatelessWidget {
   const _PasswordFieldSignUp();
 
   @override
-  State<_PasswordFieldSignUp> createState() => _PasswordFieldSignUpState();
-}
-
-class _PasswordFieldSignUpState extends State<_PasswordFieldSignUp> {
-  bool _isObscure = true;
-
-  @override
   Widget build(BuildContext context) {
+    final isObscure = context.select((SignUpBloc bloc) => bloc.state.isObscure);
+
     return AppTextField(
       key: const Key('signUp_passwordTextField'),
       hintText: 'Password',
       autoFillHints: const [AutofillHints.password],
-      obscureText: _isObscure,
+      obscureText: isObscure,
       prefix: const Icon(Icons.lock),
       suffix: IconButton(
-        icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
-        onPressed: () {
-          setState(() {
-            _isObscure = !_isObscure;
-          });
-        },
+        icon: Icon(isObscure ? Icons.visibility : Icons.visibility_off),
+        onPressed: () => context.read<SignUpBloc>().add(
+              SignUpPasswordVisibilityToggled(isObscure: !isObscure),
+            ),
       ),
       onChanged: (password) => context.read<SignUpBloc>().add(
             SignUpPasswordChanged(password),

@@ -31,3 +31,14 @@ class SignUpSubmitted extends SignUpEvent {
   @override
   List<Object?> get props => [email, password];
 }
+
+class SignUpPasswordVisibilityToggled extends SignUpEvent {
+  const SignUpPasswordVisibilityToggled({
+    required this.isObscure,
+  });
+
+  final bool isObscure;
+
+  @override
+  List<Object?> get props => [isObscure];
+}

@@ -230,10 +230,12 @@ void main() {
       expect(signUpButton.child, isA<CircularProgressIndicator>());
     });
 
-    testWidgets('password change obscure text when IconButton is pressed ',
-        (tester) async {
+    testWidgets('password with obscureText false', (tester) async {
       when(() => _signUpBloc.state).thenReturn(
         const SignUpState(status: SignUpStatus.loading),
+      );
+      when(() => _signUpBloc.state).thenReturn(
+        const SignUpState(isObscure: false),
       );
       await tester.pumpApp(
         BlocProvider.value(
@@ -241,16 +243,39 @@ void main() {
           child: SignUpView(),
         ),
       );
-      final iconVisibility = find.byIcon(Icons.visibility);
-      final iconVisibilityOff = find.byIcon(Icons.visibility_off);
-      final iconButton = find.byType(IconButton);
+      final passwordTextFieldFinder = find.byWidgetPredicate(
+        (widget) =>
+            widget is AppTextField &&
+            widget.key == signUpViewPasswordTextFieldKey,
+      );
 
-      await tester.ensureVisible(iconButton);
-      await tester.tap(iconButton);
-      await tester.pump();
+      final passwordTextField =
+          tester.widget<AppTextField>(passwordTextFieldFinder);
 
-      expect(iconVisibilityOff, findsOneWidget);
-      expect(iconVisibility, findsNothing);
+      expect(passwordTextField.obscureText, false);
+    });
+
+    testWidgets('password with obscureText true', (tester) async {
+      when(() => _signUpBloc.state).thenReturn(
+        const SignUpState(status: SignUpStatus.loading),
+      );
+
+      await tester.pumpApp(
+        BlocProvider.value(
+          value: _signUpBloc,
+          child: SignUpView(),
+        ),
+      );
+      final passwordTextFieldFinder = find.byWidgetPredicate(
+        (widget) =>
+            widget is AppTextField &&
+            widget.key == signUpViewPasswordTextFieldKey,
+      );
+
+      final passwordTextField =
+          tester.widget<AppTextField>(passwordTextFieldFinder);
+
+      expect(passwordTextField.obscureText, true);
     });
   });
 
@@ -321,6 +346,61 @@ void main() {
             testEmail,
             testPassword,
           ),
+        ),
+      ).called(1);
+    });
+    testWidgets(
+        'SignUpPasswordVisibilityToggled when visibility icon is is pressed',
+        (tester) async {
+      when(() => _signUpBloc.state).thenReturn(
+        const SignUpState(status: SignUpStatus.loading),
+      );
+
+      await tester.pumpApp(
+        BlocProvider.value(
+          value: _signUpBloc,
+          child: SignUpView(),
+        ),
+      );
+      final iconVisibility = find.byIcon(Icons.visibility);
+
+      await tester.ensureVisible(iconVisibility);
+      await tester.tap(iconVisibility);
+      await tester.pump();
+
+      verify(
+        () => _signUpBloc.add(
+          SignUpPasswordVisibilityToggled(isObscure: false),
+        ),
+      ).called(1);
+    });
+
+    testWidgets(
+        'SignUpPasswordVisibilityToggled when visibilityOff icon is is pressed',
+        (tester) async {
+      when(() => _signUpBloc.state).thenReturn(
+        const SignUpState(status: SignUpStatus.loading),
+      );
+
+      when(() => _signUpBloc.state).thenReturn(
+        const SignUpState(isObscure: false),
+      );
+
+      await tester.pumpApp(
+        BlocProvider.value(
+          value: _signUpBloc,
+          child: SignUpView(),
+        ),
+      );
+      final iconVisibilityOff = find.byIcon(Icons.visibility_off);
+
+      await tester.ensureVisible(iconVisibilityOff);
+      await tester.tap(iconVisibilityOff);
+      await tester.pump();
+
+      verify(
+        () => _signUpBloc.add(
+          SignUpPasswordVisibilityToggled(isObscure: true),
         ),
       ).called(1);
     });
