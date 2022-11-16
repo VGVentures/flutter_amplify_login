@@ -11,3 +11,4 @@ jobs:
     with:
       flutter_channel: stable
       flutter_version: 3.3.4
+      coverage_excludes: "*.g.dart lib/src/generated/*.dart"
