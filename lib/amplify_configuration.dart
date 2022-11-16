@@ -1,5 +1,5 @@
 // ignore: leading_newlines_in_multiline_strings
-const amplifyconfig = ''' {
+const amplifyConfiguration = ''' {
     "UserAgent": "aws-amplify-cli/2.0",
     "Version": "1.0",
     "auth": {
