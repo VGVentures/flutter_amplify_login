@@ -28,7 +28,11 @@
         ],
         "passwordProtectionSettings": {
           "passwordPolicyMinLength": 8,
-          "passwordPolicyCharacters": []
+          "passwordPolicyCharacters": [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_NUMBERS",
+            "REQUIRES_UPPERCASE"
+          ]
         },
         "mfaConfiguration": "OFF",
         "mfaTypes": [
@@ -38,11 +42,6 @@
           "EMAIL"
         ]
       },
-      "providerMetadata": {
-        "s3TemplateURL": "https://s3.amazonaws.com/amplify-flutteramplifylogin-dev-93532-deployment/amplify-cfn-templates/auth/flutteramplifylogin450988c1-cloudformation-template.json",
-        "logicalId": "authflutteramplifylogin450988c1"
-      },
-      "lastPushTimeStamp": "2022-09-22T07:56:45.184Z",
       "output": {
         "UserPoolId": "eu-west-1_CdfJVroIj",
         "AppClientIDWeb": "2a2crn3d9ck0p7j3qmphi9act4",
@@ -52,7 +51,12 @@
         "IdentityPoolName": "flutteramplifylogin450988c1_identitypool_450988c1__dev",
         "UserPoolName": "flutteramplifylogin450988c1_userpool_450988c1"
       },
-      "lastPushDirHash": "R8ykp09JSSu14z1v/2Ql0kBKYqo="
+      "lastPushTimeStamp": "2022-11-18T08:58:03.762Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-flutteramplifylogin-dev-93532-deployment/amplify-cfn-templates/auth/flutteramplifylogin450988c1-cloudformation-template.json",
+        "logicalId": "authflutteramplifylogin450988c1"
+      },
+      "lastPushDirHash": "UA72FeS6OHQZMlzSUjizISAbolo="
     }
   }
 }

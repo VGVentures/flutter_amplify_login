@@ -14,35 +14,54 @@
     ],
     "smsAuthenticationMessage": "Your authentication code is {####}",
     "smsVerificationMessage": "Your verification code is {####}",
-    "emailVerificationSubject": "Your verification code",
-    "emailVerificationMessage": "Your verification code is {####}",
+    "emailVerificationSubject": "Very Good Amplify Login",
+    "emailVerificationMessage": "Thanks for sign up for the Very Good Amplify Login application.\n\nYour verification code is {####}\n\n",
     "defaultPasswordPolicy": false,
     "passwordPolicyMinLength": 8,
-    "passwordPolicyCharacters": [],
+    "passwordPolicyCharacters": [
+      "Requires Lowercase",
+      "Requires Numbers",
+      "Requires Uppercase"
+    ],
     "requiredAttributes": [
       "email"
     ],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
-    "userpoolClientWriteAttributes": [
-      "email"
-    ],
-    "userpoolClientReadAttributes": [
-      "email"
-    ],
+    "userpoolClientWriteAttributes": [],
+    "userpoolClientReadAttributes": [],
     "userpoolClientLambdaRole": "flutte450988c1_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
     "sharedId": "450988c1",
     "resourceName": "flutteramplifylogin450988c1",
     "authSelections": "identityPoolAndUserPool",
-    "useDefault": "default",
+    "useDefault": "manual",
     "usernameAttributes": [
       "email"
     ],
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
-    "useEnabledMfas": true
+    "useEnabledMfas": true,
+    "authRoleArn": {
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
+    },
+    "unauthRoleArn": {
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
+    },
+    "breakCircularDependency": true,
+    "dependsOn": [],
+    "userPoolGroups": false,
+    "adminQueries": false,
+    "thirdPartyAuth": false,
+    "authProviders": [],
+    "hostedUI": false
   }
 }
