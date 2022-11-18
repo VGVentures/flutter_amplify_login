@@ -26,7 +26,7 @@ To run the desired flavor either use the launch configuration in VSCode/Android 
 $ flutter run --flavor development --target lib/main_development.dart
 
 
-_\*Flutter Amplify Login works on iOS, Android_
+_\*Flutter Amplify Login works on iOS, and Android_
 
 ---
 
