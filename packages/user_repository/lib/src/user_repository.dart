@@ -94,7 +94,7 @@ class UserRepository {
 
   /// Returns whether the user is authenticated or not.
   ///
-  /// If any exception happens will return false.
+  /// Returns `false` if an exception occurs.
   Future<bool> isUserAuthenticated() async {
     try {
       return _authClient.isUserAuthenticated();
