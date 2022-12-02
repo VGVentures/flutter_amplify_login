@@ -12,7 +12,6 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 // ignore: implementation_imports
 import 'package:amplify_flutter/src/amplify_hub.dart';
 import 'package:auth_client/auth_client.dart';
-import 'package:rxdart/subjects.dart';
 
 /// Enum indicating the Authentication status
 enum AuthStatus {
@@ -21,9 +20,6 @@ enum AuthStatus {
 
   /// Unauthenticated session
   unauthenticated,
-
-  /// Session expired
-  sessionExpired,
 }
 
 /// {@template auth_client}
@@ -41,7 +37,7 @@ class AuthClient {
 
   final AuthCategory _auth;
   final AmplifyHub _hub;
-  final _controller = BehaviorSubject<AuthStatus>();
+  final _controller = StreamController<AuthStatus>();
 
   /// Stream current [AuthStatus]
   Stream<AuthStatus> get authStatus => _controller.stream;
@@ -53,11 +49,8 @@ class AuthClient {
           _controller.add(AuthStatus.authenticated);
           break;
         case 'SIGNED_OUT':
-          _controller.add(AuthStatus.unauthenticated);
-          break;
-
         case 'SESSION_EXPIRED':
-          _controller.add(AuthStatus.sessionExpired);
+          _controller.add(AuthStatus.unauthenticated);
           break;
       }
     }
@@ -70,11 +63,6 @@ class AuthClient {
     try {
       final currentSesion = await _auth.fetchAuthSession();
       return currentSesion.isSignedIn;
-    } on AuthException catch (error, stackTrace) {
-      Error.throwWithStackTrace(
-        FetchAuthenticatedUserFailure(error),
-        stackTrace,
-      );
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(
         FetchAuthenticatedUserFailure(error),
@@ -104,8 +92,6 @@ class AuthClient {
       );
     } on UsernameExistsException catch (error, stackTrace) {
       Error.throwWithStackTrace(UserAlreadyExistException(error), stackTrace);
-    } on AuthException catch (error, stackTrace) {
-      Error.throwWithStackTrace(SignUpFailure(error), stackTrace);
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(SignUpFailure(error), stackTrace);
     }
@@ -120,11 +106,6 @@ class AuthClient {
       await _auth.confirmSignUp(
         username: email,
         confirmationCode: confirmationCode,
-      );
-    } on AuthException catch (error, stackTrace) {
-      Error.throwWithStackTrace(
-        ConfirmationCodeSignUpFailure(error),
-        stackTrace,
       );
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(
@@ -151,8 +132,6 @@ class AuthClient {
       Error.throwWithStackTrace(UserDoesNotExistException(error), stackTrace);
     } on NotAuthorizedException catch (error, stackTrace) {
       Error.throwWithStackTrace(UserNotAuthorizedException(error), stackTrace);
-    } on AuthException catch (error, stackTrace) {
-      Error.throwWithStackTrace(SignInFailure(error), stackTrace);
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(SignInFailure(error), stackTrace);
     }
@@ -164,8 +143,6 @@ class AuthClient {
   Future<void> signOut() async {
     try {
       await _auth.signOut();
-    } on AuthException catch (error, stackTrace) {
-      Error.throwWithStackTrace(SignOutFailure(error), stackTrace);
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(SignOutFailure(error), stackTrace);
     }

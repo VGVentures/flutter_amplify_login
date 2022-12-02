@@ -59,17 +59,17 @@ void main() {
       );
 
       blocTest<AppBloc, AppState>(
-        'emits sessionExpired when the status is sessionExpired',
+        'emits unauthenticated when the status is unauthenticated',
         setUp: () {
           when(() => userRepository.authStatus).thenAnswer(
-            (_) => Stream.value(AuthStatus.sessionExpired),
+            (_) => Stream.value(AuthStatus.unauthenticated),
           );
         },
         build: () => AppBloc(
           userRepository: userRepository,
           isAuthenticated: true,
         ),
-        expect: () => [AppState.sessionExpired()],
+        expect: () => [AppState.unauthenticated()],
       );
     });
 

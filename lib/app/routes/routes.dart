@@ -12,7 +12,5 @@ List<Page<void>> onGenerateAppViewPages(
       return [SignInPage.page()];
     case AppStatus.authenticated:
       return [HomePage.page()];
-    case AppStatus.sessionExpired:
-      return [SignInPage.page()];
   }
 }

@@ -66,16 +66,5 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(SignInPage), findsOneWidget);
     });
-
-    testWidgets('navigates to SignInPage when session expired', (tester) async {
-      when(() => appBloc.state).thenReturn(AppState.sessionExpired());
-      await tester.pumpApp(
-        const AppView(),
-        appBloc: appBloc,
-        userRepository: userRepository,
-      );
-      await tester.pumpAndSettle();
-      expect(find.byType(SignInPage), findsOneWidget);
-    });
   });
 }
