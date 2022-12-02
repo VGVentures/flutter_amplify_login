@@ -190,12 +190,12 @@ void main() {
       );
     });
 
-    test('emits sessionExpired', () {
+    test('emits unauthenticated', () {
       when(() => authClient.authStatus)
-          .thenAnswer((_) => Stream.value(AuthStatus.sessionExpired));
+          .thenAnswer((_) => Stream.value(AuthStatus.unauthenticated));
       expect(
         userRepository.authStatus,
-        emitsInOrder(<AuthStatus>[AuthStatus.sessionExpired]),
+        emitsInOrder(<AuthStatus>[AuthStatus.unauthenticated]),
       );
     });
   });

@@ -43,9 +43,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       case AuthStatus.unauthenticated:
         emit(const AppState.unauthenticated());
         break;
-      case AuthStatus.sessionExpired:
-        emit(const AppState.sessionExpired());
-        break;
     }
   }
 

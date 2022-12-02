@@ -101,15 +101,6 @@ void main() {
         );
       });
 
-      test('throws SignInFailure when AuthException', () {
-        when(() => authCategory.signIn(username: email, password: password))
-            .thenThrow(AuthException(''));
-        expect(
-          authClient.signIn(email, password),
-          throwsA(isA<SignInFailure>()),
-        );
-      });
-
       test('throws SignInFailure when any exception happens', () {
         when(() => authCategory.signIn(username: email, password: password))
             .thenThrow(Exception());
@@ -150,20 +141,6 @@ void main() {
       );
     });
 
-    test('throws SignUpFailure when AuthException', () {
-      when(
-        () => authCategory.signUp(
-          username: email,
-          password: password,
-          options: any(named: 'options'),
-        ),
-      ).thenThrow(AuthException(''));
-      expect(
-        authClient.signUp(email, password),
-        throwsA(isA<SignUpFailure>()),
-      );
-    });
-
     test('throws SignInFailure when any exception happens', () {
       when(
         () => authCategory.signUp(
@@ -193,19 +170,6 @@ void main() {
       );
     });
 
-    test('throws ConfirmationCodeSignUpFailure when AuthException', () {
-      when(
-        () => authCategory.confirmSignUp(
-          username: email,
-          confirmationCode: confirmationCode,
-        ),
-      ).thenThrow(AuthException(''));
-      expect(
-        authClient.confirmSignUp(email, confirmationCode),
-        throwsA(isA<ConfirmationCodeSignUpFailure>()),
-      );
-    });
-
     test('throws ConfirmationCodeSignUpFailure when any exception happens', () {
       when(
         () => authCategory.confirmSignUp(
@@ -227,14 +191,6 @@ void main() {
       expect(authClient.signOut(), completes);
     });
 
-    test('throws SignOutFailure when AuthException', () {
-      when(() => authCategory.signOut()).thenThrow(AuthException(''));
-      expect(
-        authClient.signOut,
-        throwsA(isA<SignOutFailure>()),
-      );
-    });
-
     test('throws SignOutFailure when any exception happens', () {
       when(() => authCategory.signOut()).thenThrow(Exception());
       expect(
@@ -254,15 +210,6 @@ void main() {
         when(() => authCategory.fetchAuthSession())
             .thenAnswer((_) async => AuthSession(isSignedIn: false));
         expect(authClient.isUserAuthenticated(), completion(equals(false)));
-      });
-
-      test('throws FetchAuthenticatedUserFailure when AuthException', () {
-        when(() => authCategory.fetchAuthSession())
-            .thenThrow(AuthException(''));
-        expect(
-          authClient.isUserAuthenticated,
-          throwsA(isA<FetchAuthenticatedUserFailure>()),
-        );
       });
 
       test('throws FetchAuthenticatedUserFailure when any exception happens',
@@ -306,7 +253,7 @@ void main() {
       );
     });
 
-    test('emits sessionExpired', () async {
+    test('emits unauthenticated', () async {
       final amplifyHub = _FakeAmplifyHub();
 
       final authClient = AuthClient(
@@ -316,7 +263,7 @@ void main() {
       amplifyHub._controller.add(AuthHubEvent('SESSION_EXPIRED'));
       await expectLater(
         authClient.authStatus,
-        emitsInOrder(<AuthStatus>[AuthStatus.sessionExpired]),
+        emitsInOrder(<AuthStatus>[AuthStatus.unauthenticated]),
       );
     });
 
