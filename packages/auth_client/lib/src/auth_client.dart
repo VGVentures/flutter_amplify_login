@@ -61,8 +61,8 @@ class AuthClient {
   ///Throws a [FetchAuthenticatedUserFailure] if an exception occurs.
   Future<bool> isUserAuthenticated() async {
     try {
-      final currentSesion = await _auth.fetchAuthSession();
-      return currentSesion.isSignedIn;
+      final currentSession = await _auth.fetchAuthSession();
+      return currentSession.isSignedIn;
     } catch (error, stackTrace) {
       Error.throwWithStackTrace(
         FetchAuthenticatedUserFailure(error),
