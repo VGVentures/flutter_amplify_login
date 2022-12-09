@@ -30,7 +30,7 @@ void main() {
   const signInViewSubtitleKey = Key('signIn_subtitle');
   const signInViewEmailTextFieldKey = Key('signIn_emailTextField');
   const signInViewPasswordTextFieldKey = Key('signIn_passwordTextField');
-  const signInNotAccountButtonKey = Key('singIn_notAccountButton');
+  const signInNotAccountButtonKey = Key('signIn_notAccountButton');
   const signInSignInButtonKey = Key('signIn_signInButton');
 
   setUp(() {
