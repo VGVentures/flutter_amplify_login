@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_amplify_login/generated/generated.dart';
 import 'package:flutter_amplify_login/sign_in/sign_in.dart';
-import 'package:flutter_amplify_login/sign_up/view/sing_up_page.dart';
+import 'package:flutter_amplify_login/sign_up/view/sign_up_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignInView extends StatelessWidget {
@@ -40,7 +40,7 @@ class SignInView extends StatelessWidget {
               SizedBox(height: AppSpacing.lg),
               _PasswordFieldSignIn(),
               SizedBox(height: AppSpacing.lg),
-              _SingInButton(),
+              _SignInButton(),
               Spacer(),
               _NotAccountSignIn(),
               SizedBox(height: AppSpacing.xxlg),
@@ -143,7 +143,7 @@ class _NotAccountSignIn extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.sm),
       child: RichText(
-        key: const Key('singIn_notAccountButton'),
+        key: const Key('signIn_notAccountButton'),
         text: TextSpan(
           children: <TextSpan>[
             TextSpan(
@@ -167,8 +167,8 @@ class _NotAccountSignIn extends StatelessWidget {
   }
 }
 
-class _SingInButton extends StatelessWidget {
-  const _SingInButton();
+class _SignInButton extends StatelessWidget {
+  const _SignInButton();
 
   @override
   Widget build(BuildContext context) {

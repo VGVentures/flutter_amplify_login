@@ -53,7 +53,7 @@ class SignUpView extends StatelessWidget {
               _EmailTextFieldSignUp(),
               _PasswordFieldSignUp(),
               Spacer(),
-              _SingUpButton(),
+              _SignUpButton(),
               SizedBox(height: AppSpacing.xxlg),
             ],
           ),
@@ -144,8 +144,8 @@ class _PasswordFieldSignUp extends StatelessWidget {
   }
 }
 
-class _SingUpButton extends StatelessWidget {
-  const _SingUpButton();
+class _SignUpButton extends StatelessWidget {
+  const _SignUpButton();
 
   @override
   Widget build(BuildContext context) {
