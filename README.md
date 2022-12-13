@@ -10,7 +10,6 @@ Example of a Flutter application to implement AWS Amplify authentication service
 
 You can find the article [here][article_link].
 
-
 ---
 
 ## Getting Started 🚀
@@ -21,7 +20,7 @@ This project contains 1 flavor:
 
 To run the desired flavor either use the launch configuration in VSCode/Android Studio or use the following commands:
 
-```sh
+````sh
 # Development
 $ flutter run --flavor development --target lib/main_development.dart
 
@@ -36,7 +35,7 @@ To run all unit and widget tests use the following command:
 
 ```sh
 $ flutter test --coverage --test-randomize-ordering-seed random
-```
+````
 
 To view the generated coverage report you can use [lcov](https://github.com/linux-test-project/lcov).
 
@@ -157,4 +156,4 @@ Update the `CFBundleLocalizations` array in the `Info.plist` at `ios/Runner/Info
 [very_good_analysis_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
 [very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
 [very_good_cli_link]: https://github.com/VeryGoodOpenSource/very_good_cli
-[article_link]: TODO
+[article_link]: https://verygood.ventures/blog/flutter-app-very-good-cli-aws-amplify
